@@ -1,4 +1,5 @@
 #include "Ball.cpp"
+#include "Barriers.cpp"
 #include "Paddle.cpp"
 #include "physics.h"
 #include <SFML/Graphics.hpp>
@@ -9,16 +10,12 @@ int main()
 	std::cout << "Debugging!" << std::endl;
 #endif
 
-	sf::RenderWindow window(sf::VideoMode(1200.0f, 675.0f), "Boiler box2d", sf::Style::Default);
+	sf::RenderWindow window(sf::VideoMode(1200.0f, 675.0f), "Brick Breaker", sf::Style::Default);
 	b2World world(b2Vec2(0.0, 0.0));
 	window.setFramerateLimit(60);
 
-	// Add boundaries that are hidden
-	physics::createBox(world, 0, window.getSize().y, window.getSize().x, 20, b2_staticBody); // floor
-	physics::createBox(world, window.getSize().x, 0, 20, window.getSize().y, b2_staticBody); // right wall
-	physics::createBox(world, 0, -20, window.getSize().x, 20, b2_staticBody); // roof
-	physics::createBox(world, -20, 0, 20, window.getSize().y, b2_staticBody); // left wall
-
+	// From Barriers.cpp
+	Barriers barrier1(world, window);
 	// From Ball.cpp
 	Ball b1(world, 200, 200, 20, 250, 45);
 	physics::setBlockColor(b1.body, sf::Color::Red);
@@ -39,11 +36,10 @@ int main()
 				physics::createBox(world, sf::Mouse::getPosition(window).x, sf::Mouse::getPosition(window).y, 20, 20);
 			}
 		}
-		p1.updatePosition();
+		p1.updatePosition(window);
 		b1.updatePosition();
-
+		barrier1.updateBarriers(b1.body);
 		window.clear();
-		window.draw(b1);
 		physics::displayWorld(world, window);
 		window.display();
 	}

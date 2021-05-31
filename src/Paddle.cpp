@@ -28,15 +28,21 @@ struct Paddle : public sf::RectangleShape
 
 		body->SetUserData(shape);
 	}
-	b2Body* body;
-	void updatePosition()
+	void updatePosition(sf::RenderWindow& window)
 	{
 		//	Setting paddle velocity
 		if (sf::Keyboard::isKeyPressed(sf::Keyboard::A))
 			body->SetLinearVelocity(b2Vec2(-10, 0));
 		if (sf::Keyboard::isKeyPressed(sf::Keyboard::D))
 			body->SetLinearVelocity(b2Vec2(10, 0));
+		if (body->GetPosition().x * 32 > window.getSize().x) {
+			body->SetLinearVelocity(b2Vec2(-10,0));
+		}
+		if (body->GetPosition().x * 32 < 0) {
+			body->SetLinearVelocity(b2Vec2(10, 0));
+		}
 	}
+	b2Body* body;
 };
 
 #endif
