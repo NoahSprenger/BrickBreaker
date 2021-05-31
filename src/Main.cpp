@@ -15,7 +15,9 @@ int main()
 
 	// Add boundaries that are hidden
 	physics::createBox(world, 0, window.getSize().y, window.getSize().x, 20, b2_staticBody); // floor
-	physics::createBox(world, window.getSize().x, 0, 20, window.getSize().y, b2_staticBody);
+	physics::createBox(world, window.getSize().x, 0, 20, window.getSize().y, b2_staticBody); // right wall
+	physics::createBox(world, 0, -20, window.getSize().x, 20, b2_staticBody); // roof
+	physics::createBox(world, -20, 0, 20, window.getSize().y, b2_staticBody); // left wall
 
 	// From Ball.cpp
 	Ball b1(world, 200, 200, 20, 250, 45);
