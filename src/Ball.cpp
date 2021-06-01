@@ -1,5 +1,6 @@
 #ifndef BALL_H
 #define BALL_H
+#include "Paddle.cpp"
 #include "physics.h"
 
 struct Ball : public sf::CircleShape
@@ -26,12 +27,14 @@ struct Ball : public sf::CircleShape
 		body = world.CreateBody(&bodyDef);
 		body->CreateFixture(&fixtureDef);
 
-		sf::CircleShape* shape1 = new sf::CircleShape(r);
-		shape1->setOrigin(r, r);
-		shape1->setPosition(x, y);
-		shape1->setFillColor(sf::Color::White);
+		// sf::CircleShape* shape1 = new sf::CircleShape(r);
+		// Read about the this operator
+		this->setRadius(r);
+		this->setOrigin(r, r);
+		this->setPosition(x, y);
+		this->setFillColor(sf::Color::White);
 
-		body->SetUserData(shape1);
+		// body->SetUserData(this);
 		body->SetLinearVelocity(b2Vec2(speed / pixels_per_meter * cos(angle / deg_per_rad), speed / pixels_per_meter * sin(angle / deg_per_rad)));
 	}
 	void updatePosition()
@@ -39,6 +42,24 @@ struct Ball : public sf::CircleShape
 		// Limit velocity
 		b2Vec2 velocity = body->GetLinearVelocity();
 		body->SetLinearVelocity((speed / pixels_per_meter) / velocity.Length() * velocity);
+		this->setPosition(body->GetPosition().x * pixels_per_meter, body->GetPosition().y * pixels_per_meter);
+		this->setRotation(body->GetAngle() * deg_per_rad);
+		// render.draw(*this); // Not needed
+	}
+
+	bool checkCollision(const Paddle& p1) // Calls the memory address instead of copying
+	{
+		for (b2ContactEdge* edge = body->GetContactList(); edge; edge = edge->next)
+		{
+			if (edge->other == p1.body)
+			{
+				if (edge->contact->IsTouching())
+				{
+					return true;
+				}
+			}
+		}
+		return false;
 	}
 	// member variables
 	float speed, angle;

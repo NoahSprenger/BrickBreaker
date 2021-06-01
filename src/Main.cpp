@@ -2,7 +2,6 @@
 #include "Barriers.cpp"
 #include "Paddle.cpp"
 #include "physics.h"
-#include <SFML/Graphics.hpp>
 
 int main()
 {
@@ -18,7 +17,7 @@ int main()
 	Barriers barrier1(world, window);
 	// From Ball.cpp
 	Ball b1(world, 200, 200, 20, 250, 45);
-	physics::setBlockColor(b1.body, sf::Color::Red);
+	b1.setFillColor(sf::Color::Red);
 	// From Paddle.cpp
 	Paddle p1(world, 20, 550, 100, 10);
 
@@ -38,11 +37,15 @@ int main()
 		}
 		p1.updatePosition(window);
 		b1.updatePosition();
+		if (b1.checkCollision(p1))
+		{
+			std::cout << b1.getPosition().x << std::endl;
+		}
 		barrier1.updateBarriers(b1.body);
 		window.clear();
-		physics::displayWorld(world, window);
+		world.Step(1.0 / 60, int32(8), int32(3));
+		window.draw(b1);
 		window.display();
 	}
-
 	return 0;
 }
