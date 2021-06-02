@@ -55,6 +55,9 @@ struct Ball : public sf::CircleShape
 			{
 				if (edge->contact->IsTouching())
 				{
+					// Bounce ball of paddle
+					angle = (this->getPosition().x - p1.getPosition().x)/(p1.getSize().x/2)*70 - 90;
+					body->SetLinearVelocity(b2Vec2(20*cos(angle/deg_per_rad), 20*sin(angle/deg_per_rad)));
 					return true;
 				}
 			}

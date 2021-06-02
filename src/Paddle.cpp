@@ -21,12 +21,12 @@ struct Paddle : public sf::RectangleShape
 		body = world.CreateBody(&bodyDef);
 		body->CreateFixture(&fixtureDef);
 
-		sf::RectangleShape* shape = new sf::RectangleShape(sf::Vector2f(width, height));
-		shape->setOrigin(width / 2.0, height / 2.0);
-		shape->setPosition(x, y);
-		shape->setFillColor(sf::Color::White);
-
-		body->SetUserData(shape);
+		// sf::RectangleShape* shape = new sf::RectangleShape(sf::Vector2f(width, height));
+		this->setSize(sf::Vector2f(width, height));
+		this->setOrigin(width / 2.0, height / 2.0);
+		this->setPosition(x, y);
+		this->setFillColor(sf::Color::White);
+		// body->SetUserData(shape);
 	}
 	void updatePosition(sf::RenderWindow& window)
 	{
@@ -40,6 +40,8 @@ struct Paddle : public sf::RectangleShape
 			body->SetLinearVelocity(b2Vec2(-10, 0));
 		if (body->GetPosition().x * 32 < 0)
 			body->SetLinearVelocity(b2Vec2(10, 0));
+		this->setPosition(body->GetPosition().x * pixels_per_meter, body->GetPosition().y * pixels_per_meter);
+		this->setRotation(body->GetAngle() * deg_per_rad);
 	}
 	b2Body* body;
 };
