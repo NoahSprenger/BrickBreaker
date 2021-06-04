@@ -15,7 +15,7 @@ LINK_LIBRARIES := \
 	$(LINK_LIBRARIES) \
 	stdc++fs \
 	X11 \
-	box2d
+	box2d \
 
 PRODUCTION_LINUX_ICON := sfml
 

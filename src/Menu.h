@@ -16,13 +16,8 @@ public:
 	sf::CircleShape easy_mode;
 	sf::CircleShape normal_mode;
 	sf::CircleShape hard_mode;
-	sf::Font arial;
-	sf::Texture trump_tex;
+	sf::Font arcade;
 	sf::Text easy_text, normal_text, hard_text, greeting;
-	sf::Sprite trump;
-	int counter = 0;
-	int x = 0;
-	bool movingright = true;
 };
 
 Menu::Menu(/* args */)
@@ -31,23 +26,23 @@ Menu::Menu(/* args */)
 	menu_window.setFramerateLimit(60);
 	int button_placement_x = (menu_window.getSize().x / 3) - 200;
 	int button_placement_y = (menu_window.getSize().y / 3) - 200;
-	arial.loadFromFile("content/arial.ttf");
-	easy_text.setFont(arial);
-	easy_text.setCharacterSize(20);
-	easy_text.setPosition(button_placement_x, button_placement_y - 40);
+	arcade.loadFromFile("content/ka1.ttf");
+	easy_text.setFont(arcade);
+	easy_text.setCharacterSize(50);
+	easy_text.setPosition(button_placement_x, button_placement_y - 100);
 	easy_text.setString("Easy");
-	normal_text.setFont(arial);
-	normal_text.setCharacterSize(20);
-	normal_text.setPosition(button_placement_x * 2, button_placement_y - 40);
+	normal_text.setFont(arcade);
+	normal_text.setCharacterSize(50);
+	normal_text.setPosition(button_placement_x * 2, button_placement_y - 100);
 	normal_text.setString("Normal");
-	hard_text.setFont(arial);
-	hard_text.setCharacterSize(20);
-	hard_text.setPosition(button_placement_x * 3, button_placement_y - 40);
+	hard_text.setFont(arcade);
+	hard_text.setCharacterSize(50);
+	hard_text.setPosition(button_placement_x * 3, button_placement_y - 100);
 	hard_text.setString("Hard");
-	greeting.setFont(arial);
-	greeting.setCharacterSize(50);
-	greeting.setPosition(button_placement_x * 2 - 100, button_placement_y + 300);
-	greeting.setString("Punch Trump");
+	greeting.setFont(arcade);
+	greeting.setCharacterSize(100);
+	greeting.setPosition(button_placement_x * 2 - 450, button_placement_y + 300);
+	greeting.setString("Brick Breaker");
 	easy_mode.setFillColor(sf::Color::Green);
 	easy_mode.setPosition(button_placement_x, button_placement_y);
 	easy_mode.setRadius(50);
@@ -57,40 +52,11 @@ Menu::Menu(/* args */)
 	hard_mode.setFillColor(sf::Color::Red);
 	hard_mode.setPosition(button_placement_x * 3, button_placement_y);
 	hard_mode.setRadius(50);
-	trump_tex.loadFromFile("content/TrumpSprite.png");
-	trump.setTexture(trump_tex);
-	trump.setPosition(sf::Vector2f(0, menu_window.getSize().y - 260));
-	trump.setTextureRect(sf::IntRect(0, 0, 250, 250));
 }
 
 Menu::~Menu()
 {
 	menu_window.close();
-}
-
-// Deals with the miner running (animation, movement)
-void Menu::run(sf::RenderWindow& window, sf::Sprite& runner, int& counter, int& x, bool& movingright)
-{
-	counter += 10;
-	if (counter > 2250)
-	{
-		counter = 0;
-	}
-	if (counter % 250 == 0)
-		runner.setTextureRect(sf::IntRect(counter, 0, 250, 250));
-
-	if (runner.getPosition().x < window.getSize().x && movingright)
-	{
-		x = 1;
-	}
-	else
-	{
-		movingright = false;
-		x = -1;
-		if (runner.getPosition().x < 0)
-			movingright = true;
-	}
-	runner.move(x, 0);
 }
 
 int Menu::Run_Menu()
@@ -128,7 +94,6 @@ int Menu::Run_Menu()
 				}
 			}
 		}
-		run(menu_window, trump, counter, x, movingright);
 		menu_window.clear();
 		menu_window.draw(easy_text);
 		menu_window.draw(normal_text);
@@ -137,7 +102,6 @@ int Menu::Run_Menu()
 		menu_window.draw(easy_mode);
 		menu_window.draw(normal_mode);
 		menu_window.draw(hard_mode);
-		menu_window.draw(trump);
 		menu_window.display();
 	}
 	return 0;

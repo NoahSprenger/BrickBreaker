@@ -1,5 +1,6 @@
 #ifndef BALL_H
 #define BALL_H
+#include "Brick.cpp"
 #include "Paddle.cpp"
 #include "physics.h"
 
@@ -37,16 +38,16 @@ struct Ball : public sf::CircleShape
 		// body->SetUserData(this);
 		body->SetLinearVelocity(b2Vec2(speed / pixels_per_meter * cos(angle / deg_per_rad), speed / pixels_per_meter * sin(angle / deg_per_rad)));
 	}
-	void updatePosition()
+	void updatePosition(sf::RenderWindow& render)
 	{
 		// Limit velocity
 		b2Vec2 velocity = body->GetLinearVelocity();
 		body->SetLinearVelocity((speed / pixels_per_meter) / velocity.Length() * velocity);
 		this->setPosition(body->GetPosition().x * pixels_per_meter, body->GetPosition().y * pixels_per_meter);
 		this->setRotation(body->GetAngle() * deg_per_rad);
-		// render.draw(*this); // Not needed
+		render.draw(*this);
 	}
-
+	// Collision with paddle and ball
 	bool checkCollision(const Paddle& p1) // Calls the memory address instead of copying
 	{
 		for (b2ContactEdge* edge = body->GetContactList(); edge; edge = edge->next)
@@ -56,8 +57,23 @@ struct Ball : public sf::CircleShape
 				if (edge->contact->IsTouching())
 				{
 					// Bounce ball of paddle
-					angle = (this->getPosition().x - p1.getPosition().x)/(p1.getSize().x/2)*70 - 90;
-					body->SetLinearVelocity(b2Vec2(20*cos(angle/deg_per_rad), 20*sin(angle/deg_per_rad)));
+					angle = (this->getPosition().x - p1.getPosition().x) / (p1.getSize().x / 2) * 70 - 90;
+					body->SetLinearVelocity(b2Vec2(20 * cos(angle / deg_per_rad), 20 * sin(angle / deg_per_rad)));
+					return true;
+				}
+			}
+		}
+		return false;
+	}
+	// Collision with brick
+	bool checkCollision(const Brick& b1) // Calls the memory address instead of copying
+	{
+		for (b2ContactEdge* edge = body->GetContactList(); edge; edge = edge->next)
+		{
+			if (edge->other == b1.body)
+			{
+				if (edge->contact->IsTouching())
+				{
 					return true;
 				}
 			}

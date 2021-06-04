@@ -1,10 +1,10 @@
-#ifndef PADDLE_H
-#define PADDLE_H
+#ifndef BRICK_H
+#define BRICK_H
 #include "physics.h"
 
-struct Paddle : public sf::RectangleShape
+struct Brick : public sf::RectangleShape
 {
-	Paddle(b2World& world, float x, float y, float width, float height)
+	Brick(b2World& world, float x, float y, float width, float height)
 	{
 		b2BodyDef bodyDef;
 		bodyDef.position.Set((x + width / 2.0) / pixels_per_meter, (y + height / 2.0) / pixels_per_meter);
@@ -28,21 +28,11 @@ struct Paddle : public sf::RectangleShape
 		this->setFillColor(sf::Color::White);
 		// body->SetUserData(shape);
 	}
-	void updatePosition(sf::RenderWindow& window)
+	void updatePosition(sf::RenderWindow& render)
 	{
-		//	Setting paddle velocity
-		body->SetLinearVelocity(b2Vec2(0, 0));
-		if (sf::Keyboard::isKeyPressed(sf::Keyboard::A))
-			body->SetLinearVelocity(b2Vec2(-10, 0));
-		if (sf::Keyboard::isKeyPressed(sf::Keyboard::D))
-			body->SetLinearVelocity(b2Vec2(10, 0));
-		if (body->GetPosition().x * 32 > window.getSize().x)
-			body->SetLinearVelocity(b2Vec2(-10, 0));
-		if (body->GetPosition().x * 32 < 0)
-			body->SetLinearVelocity(b2Vec2(10, 0));
 		this->setPosition(body->GetPosition().x * pixels_per_meter, body->GetPosition().y * pixels_per_meter);
 		this->setRotation(body->GetAngle() * deg_per_rad);
-		window.draw(*this);
+		render.draw(*this);
 	}
 	b2Body* body;
 };
