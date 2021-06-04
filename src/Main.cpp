@@ -24,13 +24,14 @@ int main()
 	b1.setFillColor(sf::Color::Red);
 	// From Paddle.cpp
 	Paddle p1(world, 20, 550, 100, 10);
-	// Brick bricks(world, 40, 40, 60, 20);
 	std::vector<Brick> bricks;
 	for (int i = 0; i < 10; i++)
 	{
-		std::cout << i << std::endl;
-		bricks.push_back(Brick(world, 40 + i * 120, 40, 60, 20));
-		bricks.back().setFillColor(sf::Color::Cyan);
+		for (int j = 0; j < 4; j++)
+		{
+			bricks.push_back(Brick(world, 40 + i * 120, 40 + j * 30, 60, 20));
+			bricks.back().setFillColor(sf::Color::Cyan);
+		}
 	}
 	while (window.isOpen() && !sf::Keyboard::isKeyPressed(sf::Keyboard::Escape))
 	{
@@ -51,12 +52,15 @@ int main()
 		barrier1.updateBarriers(b1.body); // refactor to be like the others so you don't have to call anything from physics.h
 		for (long unsigned int i = 0; i < bricks.size(); i++)
 		{
-			bricks[i].updatePosition(window);
 			if (b1.checkCollision(bricks[i]))
 			{
 				world.DestroyBody(bricks[i].body);
 				bricks.erase(bricks.begin() + i);
 			}
+		}
+		for (auto i : bricks)
+		{ // I like this way
+			i.updatePosition(window);
 		}
 		window.display();
 	}
