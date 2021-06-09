@@ -11,7 +11,6 @@ public:
 	Menu(/* args */);
 	~Menu();
 	int Run_Menu();
-	void run(sf::RenderWindow& window, sf::Sprite& runner, int& counter, int& x, bool& movingright);
 	sf::RenderWindow menu_window;
 	sf::CircleShape easy_mode;
 	sf::CircleShape normal_mode;

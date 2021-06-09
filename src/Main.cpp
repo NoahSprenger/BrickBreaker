@@ -4,6 +4,8 @@
 #include "Menu.h"
 #include "Paddle.cpp"
 #include "physics.h"
+#include <imgui/imgui-SFML.h>
+#include <imgui/imgui.h>
 #include <vector>
 
 int main()
@@ -13,7 +15,18 @@ int main()
 #endif
 
 	Menu menu;
-	menu.Run_Menu();
+	switch (menu.Run_Menu())
+	{
+		case 1:
+			/* code */
+			break;
+		case 2:
+			break;
+		case 3:
+			break;
+		default:
+			break;
+	}
 	sf::RenderWindow window(sf::VideoMode(1200.0f, 675.0f), "Brick Breaker", sf::Style::Default);
 	b2World world(b2Vec2(0.0, 0.0));
 	window.setFramerateLimit(60);
@@ -33,15 +46,33 @@ int main()
 			bricks.back().setFillColor(sf::Color::Cyan);
 		}
 	}
+
+	// ImGui fun
+	bool settings = false;
+	ImGui::SFML::Init(window);
+	sf::Clock deltaClock;
 	while (window.isOpen() && !sf::Keyboard::isKeyPressed(sf::Keyboard::Escape))
 	{
 		sf::Event event;
+		ImGui::SFML::Update(window, deltaClock.restart());
 		while (window.pollEvent(event))
 		{
+			ImGui::SFML::ProcessEvent(event);
 			if (event.type == sf::Event::Closed)
 			{
 				window.close();
 			}
+		}
+		// Outside of event loop because of tearing issue with imgui widget
+		if (sf::Keyboard::isKeyPressed(sf::Keyboard::F11) || settings)
+		{
+			settings = true;
+			ImGui::Begin("Settings");
+			ImGui::End();
+		}
+		if (sf::Keyboard::isKeyPressed(sf::Keyboard::F12))
+		{
+			settings = false;
 		}
 		b1.checkCollision(p1);
 		// Brick loop
@@ -62,7 +93,9 @@ int main()
 		{ // I like this way
 			i.updatePosition(window);
 		}
+		ImGui::SFML::Render(window);
 		window.display();
 	}
+	ImGui::SFML::Shutdown();
 	return 0;
 }

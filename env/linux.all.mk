@@ -16,8 +16,10 @@ LINK_LIBRARIES := \
 	stdc++fs \
 	X11 \
 	box2d \
+	imsfml \
+	GL
 
 PRODUCTION_LINUX_ICON := sfml
 
-PRODUCTION_LINUX_APP_NAME := SFML Boilerplate Linux
-PRODUCTION_LINUX_APP_COMMENT := Boilerplate
+PRODUCTION_LINUX_APP_NAME := Brick Breaker
+PRODUCTION_LINUX_APP_COMMENT := Brick Breaker game made for Gr12 Comp Sci class
