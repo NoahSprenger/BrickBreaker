@@ -27,11 +27,12 @@ int main()
 		default:
 			break;
 	}
-	sf::RenderWindow window(sf::VideoMode(1200.0f, 675.0f), "Brick Breaker", sf::Style::Default);
+	sf::RenderWindow window;
+	window.create(sf::VideoMode(1200.0f, 675.0f), "Brick Breaker", sf::Style::Default);
 	b2World world(b2Vec2(0.0, 0.0));
 	window.setFramerateLimit(60);
 	// From Barriers.cpp
-	Barriers barrier1(world, window);
+	Barriers barrier(world, window);
 	// From Ball.cpp
 	Ball b1(world, 200, 200, 20, 250, 45);
 	b1.setFillColor(sf::Color::Red);
@@ -63,11 +64,25 @@ int main()
 				window.close();
 			}
 		}
-		// Outside of event loop because of tearing issue with imgui widget
+		// Outside of event loop because of tearing issue with imgui window
 		if (sf::Keyboard::isKeyPressed(sf::Keyboard::F11) || settings)
 		{
 			settings = true;
 			ImGui::Begin("Settings");
+			if (ImGui::Button("Fullscreen"))
+			{
+				window.close();
+				window.create(sf::VideoMode(1920.0f, 1080.0f), "Brick Breaker", sf::Style::Fullscreen);
+				window.setFramerateLimit(60);
+				// Still need to resize the game area (paddle, boxes, floor, sides, etc)
+			}
+			if (ImGui::Button("Default"))
+			{
+				window.close();
+				window.create(sf::VideoMode(1200.0f, 675.0f), "Brick Breaker", sf::Style::Default);
+				window.setFramerateLimit(60);
+				// Still need to resize the game features
+			}
 			ImGui::End();
 		}
 		if (sf::Keyboard::isKeyPressed(sf::Keyboard::F12))
@@ -75,12 +90,12 @@ int main()
 			settings = false;
 		}
 		b1.checkCollision(p1);
+		b1.deathCollision(barrier.barriers[0]);
 		// Brick loop
 		window.clear();
 		world.Step(1.0 / 60, int32(8), int32(3));
 		p1.updatePosition(window);
 		b1.updatePosition(window);
-		barrier1.updateBarriers(b1.body); // refactor to be like the others so you don't have to call anything from physics.h
 		for (long unsigned int i = 0; i < bricks.size(); i++)
 		{
 			if (b1.checkCollision(bricks[i]))

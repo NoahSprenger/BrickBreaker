@@ -65,6 +65,22 @@ struct Ball : public sf::CircleShape
 		}
 		return false;
 	}
+	// Collision with ball and floor for death
+	bool deathCollision(const Paddle& barrier) // Calls the memory address instead of copying
+	{
+		for (b2ContactEdge* edge = body->GetContactList(); edge; edge = edge->next)
+		{
+			if (edge->other == barrier.body)
+			{
+				if (edge->contact->IsTouching())
+				{
+					std::cout << "Death\n";
+					return true;
+				}
+			}
+		}
+		return false;
+	}
 	// Collision with brick
 	bool checkCollision(const Brick& b1) // Calls the memory address instead of copying
 	{

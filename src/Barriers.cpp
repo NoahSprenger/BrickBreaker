@@ -1,5 +1,6 @@
 #ifndef Barriers_H
 #define Barriers_H
+#include "Paddle.cpp"
 #include "physics.h"
 
 struct Barriers
@@ -7,22 +8,20 @@ struct Barriers
 	Barriers(b2World& world, sf::RenderWindow& window)
 	{
 		// Add boundaries that are hidden
-		floor = physics::createBox(world, 0, window.getSize().y, window.getSize().x, 20, b2_staticBody); // floor
-		wallR = physics::createBox(world, window.getSize().x, 0, 20, window.getSize().y, b2_staticBody); // right wall
-		roof = physics::createBox(world, 0, -20, window.getSize().x, 20, b2_staticBody);				 // roof
-		wallL = physics::createBox(world, -20, 0, 20, window.getSize().y, b2_staticBody);				 // left wall
+		Paddle floor(world, 0, window.getSize().y, window.getSize().x, 20);
+		barriers.push_back(floor);
+		Paddle wallR(world, window.getSize().x, 0, 20, window.getSize().y);
+		barriers.push_back(wallR);
+		Paddle roof(world, 0, -20, window.getSize().x, 20);
+		barriers.push_back(roof);
+		Paddle wallL(world, -20, 0, 20, window.getSize().y);
+		barriers.push_back(wallL);
 	}
-	void updateBarriers(b2Body* ball)
+	void updateBarriers()
 	{
-		if (physics::checkCollision(floor, ball))
-		{
-			std::cout << "Death\n";
-			// End game function (death screen, noise, etc)
-		}
-
 		// use this for barriers to hit
 	}
-	Block floor, wallR, roof, wallL;
+	std::vector<Paddle> barriers;
 };
 
 #endif
