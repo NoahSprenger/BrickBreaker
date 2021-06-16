@@ -2,7 +2,7 @@
 #define BALL_H
 #include "Brick.cpp"
 #include "Paddle.cpp"
-#include "physics.h"
+// #include "physics.h"
 
 struct Ball : public sf::CircleShape
 {
@@ -66,7 +66,7 @@ struct Ball : public sf::CircleShape
 		return false;
 	}
 	// Collision with ball and floor for death
-	bool deathCollision(const Paddle& barrier) // Calls the memory address instead of copying
+	bool deathCollision(b2World& world, sf::RenderWindow& window, const Paddle& barrier, int& powerup, Ball& b1, Paddle& p1, std::vector<Brick>& bricks, int dif) // Calls the memory address instead of copying
 	{
 		for (b2ContactEdge* edge = body->GetContactList(); edge; edge = edge->next)
 		{
@@ -75,6 +75,79 @@ struct Ball : public sf::CircleShape
 				if (edge->contact->IsTouching())
 				{
 					std::cout << "Death\n";
+					powerup = 0;
+					Paddle holder(world, window.getSize().x / 2 - 50, window.getSize().y * 0.9, 100, 10);
+					p1 = holder;
+					world.DestroyBody(b1.body);
+					speed = 250;
+					angle = 90;
+					b2BodyDef bodyDef;
+					bodyDef.position.Set((window.getSize().x / 2) / pixels_per_meter, 300 / pixels_per_meter);
+					bodyDef.type = b2_dynamicBody;
+					bodyDef.linearDamping = 0.0;
+					b2CircleShape b2shape;
+
+					b2shape.m_radius = 20 / pixels_per_meter;
+
+					b2FixtureDef fixtureDef;
+					fixtureDef.density = 1.0;
+					fixtureDef.friction = 0.0;
+					fixtureDef.restitution = 1.0;
+					fixtureDef.shape = &b2shape;
+
+					body = world.CreateBody(&bodyDef);
+					body->CreateFixture(&fixtureDef);
+
+					// sf::CircleShape* shape1 = new sf::CircleShape(r);
+					// Read about the this operator
+					this->setRadius(20);
+					this->setOrigin(20, 20);
+					this->setPosition(200, 300);
+					this->setFillColor(sf::Color::White);
+
+					// body->SetUserData(this);
+					body->SetLinearVelocity(b2Vec2(speed / pixels_per_meter * cos(angle / deg_per_rad), speed / pixels_per_meter * sin(angle / deg_per_rad)));
+					for (long unsigned int i = 0; i < bricks.size(); i++)
+					{
+						world.DestroyBody(bricks[i].body);
+					}
+					bricks.clear();
+					switch (dif)
+					{
+						case 1:
+							for (int i = 0; i < 10; i++)
+							{
+								for (int j = 0; j < 1; j++)
+								{
+									bricks.push_back(Brick(world, 40 + i * 120, 40 + j * 30, 60, 20));
+									bricks.back().setFillColor(sf::Color::Cyan);
+								}
+							}
+							break;
+						case 2:
+							for (int i = 0; i < 10; i++)
+							{
+								for (int j = 0; j < 3; j++)
+								{
+									bricks.push_back(Brick(world, 40 + i * 120, 40 + j * 30, 60, 20));
+									bricks.back().setFillColor(sf::Color::Cyan);
+									// physics::setCollisionID(bricks.back().body, -1); // try and get to smash through the bricks
+								}
+							}
+							break;
+						case 3:
+							for (int i = 0; i < 10; i++)
+							{
+								for (int j = 0; j < 5; j++)
+								{
+									bricks.push_back(Brick(world, 40 + i * 120, 40 + j * 30, 60, 20));
+									bricks.back().setFillColor(sf::Color::Cyan);
+								}
+							}
+							break;
+						default:
+							break;
+					}
 					return true;
 				}
 			}

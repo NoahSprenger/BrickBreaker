@@ -5,7 +5,7 @@
 
 struct Sounds
 {
-	Sounds(b2World& world, sf::RenderWindow& window)
+	Sounds()
 	{
 		ball_buffer.loadFromFile("content/ball.wav");
 		ball.setBuffer(ball_buffer);

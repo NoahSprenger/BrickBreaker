@@ -17,7 +17,8 @@ int main()
 	std::vector<Brick> bricks;
 	b2World world(b2Vec2(0.0, 0.0));
 	Menu menu;
-	switch (menu.Run_Menu())
+	int dif = menu.Run_Menu();
+	switch (dif)
 	{
 		case 1:
 			for (int i = 0; i < 10; i++)
@@ -59,16 +60,14 @@ int main()
 	// From Barriers.cpp
 	Barriers barrier(world, window);
 	// From Ball.cpp
-	Ball b1(world, 200, 200, 20, 250, 45);
-	b1.setFillColor(sf::Color::Red);
+	Ball b1(world, window.getSize().x / 2, 300, 20, 250, 90);
 	// physics::setCollisionID(b1.body, -1);
 	// From Paddle.cpp
-	Paddle p1(world, 20, window.getSize().y * 0.9, 100, 10);
+	Paddle p1(world, window.getSize().x / 2 - 50, window.getSize().y * 0.9, 100, 10);
 	// Sound stuff
-	Sounds ball(world, window);
+	Sounds ball;
 	// Counters
 	int powerup = 0;
-	bool isPowerup = false;
 	// ImGui fun
 	bool settings = false;
 	ImGui::SFML::Init(window);
@@ -120,10 +119,10 @@ int main()
 			settings = false;
 		}
 		b1.checkCollision(p1);
-		b1.deathCollision(barrier.barriers[0]);
 		// Brick loop
 		window.clear();
 		world.Step(1.0 / 60, int32(8), int32(3));
+		b1.deathCollision(world, window, barrier.barriers[0], powerup, b1, p1, bricks, dif);
 		p1.updatePosition(window);
 		b1.updatePosition(window);
 		for (long unsigned int i = 0; i < bricks.size(); i++)
@@ -134,8 +133,16 @@ int main()
 				world.DestroyBody(bricks[i].body);
 				bricks.erase(bricks.begin() + i);
 				powerup++;
-				if (powerup == 5) {
-					p1.updateSize(world, 300);
+				// Use a random number between 5 and 10 to do a random powerup (create more powerups)
+				switch (powerup)
+				{
+					case 5:
+						p1.updateSize(world, 300);
+						break;
+					case 6:
+						p1.updateSize(world, 100);
+					default:
+						break;
 				}
 			}
 		}
