@@ -34,6 +34,47 @@ struct Brick : public sf::RectangleShape
 		this->setRotation(body->GetAngle() * deg_per_rad);
 		render.draw(*this);
 	}
+	void refill_vector(b2World& world, int& dif, std::vector<Brick>& bricks)
+	{
+		// Could make a vector for each row and that row then has a diffrent dificulty to break (e.g. two hits, three hits)
+		switch (dif)
+		{
+			case 1:
+				for (int i = 0; i < 10; i++)
+				{
+					for (int j = 0; j < 1; j++)
+					{
+						bricks.push_back(Brick(world, 40 + i * 120, 40 + j * 30, 60, 20));
+						bricks.back().setFillColor(sf::Color::Cyan);
+					}
+				}
+				break;
+			case 2:
+				for (int i = 0; i < 10; i++)
+				{
+					for (int j = 0; j < 3; j++)
+					{
+						bricks.push_back(Brick(world, 40 + i * 120, 40 + j * 30, 60, 20));
+						bricks.back().setFillColor(sf::Color::Cyan);
+						// physics::setCollisionID(bricks.back().body, -1); // try and get to smash through the bricks
+					}
+				}
+				break;
+			case 3:
+				for (int i = 0; i < 10; i++)
+				{
+					for (int j = 0; j < 5; j++)
+					{
+						bricks.push_back(Brick(world, 40 + i * 120, 40 + j * 30, 60, 20));
+						bricks.back().setFillColor(sf::Color::Cyan);
+					}
+				}
+				break;
+			default:
+				break;
+		}
+	}
+
 	b2Body* body;
 };
 

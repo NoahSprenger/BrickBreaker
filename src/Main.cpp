@@ -18,49 +18,14 @@ int main()
 	b2World world(b2Vec2(0.0, 0.0));
 	Menu menu;
 	int dif = menu.Run_Menu();
-	switch (dif)
-	{
-		case 1:
-			for (int i = 0; i < 10; i++)
-			{
-				for (int j = 0; j < 1; j++)
-				{
-					bricks.push_back(Brick(world, 40 + i * 120, 40 + j * 30, 60, 20));
-					bricks.back().setFillColor(sf::Color::Cyan);
-				}
-			}
-			break;
-		case 2:
-			for (int i = 0; i < 10; i++)
-			{
-				for (int j = 0; j < 3; j++)
-				{
-					bricks.push_back(Brick(world, 40 + i * 120, 40 + j * 30, 60, 20));
-					bricks.back().setFillColor(sf::Color::Cyan);
-					// physics::setCollisionID(bricks.back().body, -1); // try and get to smash through the bricks
-				}
-			}
-			break;
-		case 3:
-			for (int i = 0; i < 10; i++)
-			{
-				for (int j = 0; j < 5; j++)
-				{
-					bricks.push_back(Brick(world, 40 + i * 120, 40 + j * 30, 60, 20));
-					bricks.back().setFillColor(sf::Color::Cyan);
-				}
-			}
-			break;
-		default:
-			break;
-	}
+	bricks[0].refill_vector(world, dif, bricks);
 	sf::RenderWindow window;
 	window.create(sf::VideoMode(1200.0f, 675.0f), "Brick Breaker", sf::Style::Default);
 	window.setFramerateLimit(60);
 	// From Barriers.cpp
 	Barriers barrier(world, window);
 	// From Ball.cpp
-	Ball b1(world, window.getSize().x / 2, 300, 20, 250, 90);
+	Ball b1(world, window.getSize().x / 2, 300, 20, 250 * dif, 90);
 	// physics::setCollisionID(b1.body, -1);
 	// From Paddle.cpp
 	Paddle p1(world, window.getSize().x / 2 - 50, window.getSize().y * 0.9, 100, 10);
@@ -72,9 +37,9 @@ int main()
 	bool settings = false;
 	ImGui::SFML::Init(window);
 	sf::Clock deltaClock;
+	sf::Event event;
 	while (window.isOpen() && !sf::Keyboard::isKeyPressed(sf::Keyboard::Escape))
 	{
-		sf::Event event;
 		ImGui::SFML::Update(window, deltaClock.restart());
 		while (window.pollEvent(event))
 		{
@@ -83,13 +48,8 @@ int main()
 			{
 				window.close();
 			}
-			if (event.type == sf::Event::KeyReleased)
-			{
-				if (sf::Keyboard::isKeyPressed(sf::Keyboard::Space))
-					p1.updateSize(world, 400);
-			}
 		}
-		// Outside of event loop because of tearing issue with imgui window
+		// Outside of event loop because of tearing issue with imgui window.
 		if (sf::Keyboard::isKeyPressed(sf::Keyboard::F11) || settings)
 		{
 			settings = true;
@@ -112,6 +72,9 @@ int main()
 				p1.resize(world, window);
 				// Still need to resize ball into the window
 			}
+			if (ImGui::Button("Quit")) {
+				window.close();
+			}
 			ImGui::End();
 		}
 		if (sf::Keyboard::isKeyPressed(sf::Keyboard::F12))
@@ -122,6 +85,10 @@ int main()
 		// Brick loop
 		window.clear();
 		world.Step(1.0 / 60, int32(8), int32(3));
+		if (bricks.empty())
+		{
+			bricks[0].refill_vector(world, dif, bricks);
+		}
 		b1.deathCollision(world, window, barrier.barriers[0], powerup, b1, p1, bricks, dif);
 		p1.updatePosition(window);
 		b1.updatePosition(window);
@@ -136,10 +103,13 @@ int main()
 				// Use a random number between 5 and 10 to do a random powerup (create more powerups)
 				switch (powerup)
 				{
+					case 2:
+						p1.faster_paddle();
+						break;
 					case 5:
 						p1.updateSize(world, 300);
 						break;
-					case 6:
+					case 10:
 						p1.updateSize(world, 100);
 					default:
 						break;

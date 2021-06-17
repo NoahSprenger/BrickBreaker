@@ -25,19 +25,21 @@ struct Paddle : public sf::RectangleShape
 		this->setOrigin(width / 2.0, height / 2.0);
 		this->setPosition(x, y);
 		this->setFillColor(sf::Color::White);
+		left = -10;
+		right = 10;
 	}
 	void updatePosition(sf::RenderWindow& window)
 	{
 		//	Setting paddle velocity
 		body->SetLinearVelocity(b2Vec2(0, 0));
 		if (sf::Keyboard::isKeyPressed(sf::Keyboard::A))
-			body->SetLinearVelocity(b2Vec2(-10, 0));
+			body->SetLinearVelocity(b2Vec2(left, 0));
 		if (sf::Keyboard::isKeyPressed(sf::Keyboard::D))
-			body->SetLinearVelocity(b2Vec2(10, 0));
-		if (body->GetPosition().x * 32 > window.getSize().x)
-			body->SetLinearVelocity(b2Vec2(-10, 0));
-		if (body->GetPosition().x * 32 < 0)
-			body->SetLinearVelocity(b2Vec2(10, 0));
+			body->SetLinearVelocity(b2Vec2(right, 0));
+		if (body->GetPosition().x * 32 > window.getSize().x) // Catches if the paddle tries to go out of bounds
+			body->SetLinearVelocity(b2Vec2(left, 0));
+		if (body->GetPosition().x * 32 < 0) // Catches if the paddle tries to go out of bounds
+			body->SetLinearVelocity(b2Vec2(right, 0));
 		this->setPosition(body->GetPosition().x * pixels_per_meter, body->GetPosition().y * pixels_per_meter);
 		this->setRotation(body->GetAngle() * deg_per_rad);
 		window.draw(*this);
@@ -99,6 +101,13 @@ struct Paddle : public sf::RectangleShape
 		this->setPosition(x, y);
 		this->setFillColor(sf::Color::White);
 	}
+	// Powerup for a faster paddle
+	void faster_paddle()
+	{
+		right = 20;
+		left = -20;
+	}
+	int up, down, right, left;
 	b2Body* body;
 };
 

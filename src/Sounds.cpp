@@ -14,8 +14,8 @@ struct Sounds
 	{
 		ball.play();
 	}
-	sf::SoundBuffer ball_buffer;
-	sf::Sound ball;
+	sf::SoundBuffer ball_buffer, death_buffer;
+	sf::Sound ball, death;
 };
 
 #endif
