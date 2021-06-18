@@ -3,7 +3,7 @@
 #include "physics.h"
 #include <SFML/Graphics.hpp>
 
-struct Text : sf::Text
+struct Text : public sf::Text
 {
 	Text(sf::RenderWindow& window)
 	{

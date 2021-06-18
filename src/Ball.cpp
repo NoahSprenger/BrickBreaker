@@ -34,6 +34,8 @@ struct Ball : public sf::CircleShape
 		this->setOrigin(r, r);
 		this->setPosition(x, y);
 		this->setFillColor(sf::Color::White);
+		ball_txt.loadFromFile("content/ball.png");
+		this->setTexture(&ball_txt);
 
 		// body->SetUserData(this);
 		body->SetLinearVelocity(b2Vec2(speed / pixels_per_meter * cos(angle / deg_per_rad), speed / pixels_per_meter * sin(angle / deg_per_rad)));
@@ -74,12 +76,12 @@ struct Ball : public sf::CircleShape
 			{
 				if (edge->contact->IsTouching())
 				{
-					std::cout << "Death\n";
 					powerup = 0;
 					world.DestroyBody(p1.body);
-					Paddle holder(world, window.getSize().x / 2 - 50, window.getSize().y * 0.9, 100, 10);
+					Paddle holder(world, window.getSize().x / 2 - 50, window.getSize().y * 0.9, window.getSize().x / 12, window.getSize().y / 67.5);
 					p1 = holder;
 					world.DestroyBody(b1.body);
+					int r = (window.getSize().x / 30) / 2;
 					speed = 250 * dif;
 					angle = 90;
 					b2BodyDef bodyDef;
@@ -88,7 +90,7 @@ struct Ball : public sf::CircleShape
 					bodyDef.linearDamping = 0.0;
 					b2CircleShape b2shape;
 
-					b2shape.m_radius = 20 / pixels_per_meter;
+					b2shape.m_radius = r / pixels_per_meter;
 
 					b2FixtureDef fixtureDef;
 					fixtureDef.density = 1.0;
@@ -100,8 +102,8 @@ struct Ball : public sf::CircleShape
 					body->CreateFixture(&fixtureDef);
 
 					// Read about the this operator
-					this->setRadius(20);
-					this->setOrigin(20, 20);
+					this->setRadius(r);
+					this->setOrigin(r, r);
 					this->setPosition(200, 300);
 					this->setFillColor(sf::Color::White);
 					body->SetLinearVelocity(b2Vec2(speed / pixels_per_meter * cos(angle / deg_per_rad), speed / pixels_per_meter * sin(angle / deg_per_rad)));
@@ -134,7 +136,8 @@ struct Ball : public sf::CircleShape
 	}
 	void resize(b2World& world, sf::RenderWindow& window, int dif)
 	{
-		angle = this->body->GetAngle();
+		// angle = this->body->GetAngle(); // Results in a bug of the ball stuck bouncing from wall to wall
+		angle = 90;
 		int x = this->getPosition().x, y = this->getPosition().y, r = (window.getSize().x / 30) / 2;
 		world.DestroyBody(this->body);
 		speed = 250 * dif;
@@ -173,6 +176,7 @@ struct Ball : public sf::CircleShape
 	// member variables
 	float speed, angle;
 	b2Body* body; // box2d body
+	sf::Texture ball_txt;
 };
 
 #endif

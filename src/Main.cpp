@@ -1,8 +1,16 @@
+// ! TO DO ! //
+/* multiple lives and levels,
+powerups, fullscreen resizing,
+add textures to make it more visually appealing,
+add french support, create a pause function to pause the game,
+a system to unlock backgrounds etc (if I get everything else done)*/
+#include "Background.cpp"
 #include "Ball.cpp"
 #include "Barriers.cpp"
 #include "Brick.cpp"
 #include "Menu.h"
 #include "Paddle.cpp"
+#include "Powerup.cpp"
 #include "Sounds.cpp"
 #include "Text.cpp"
 #include "physics.h"
@@ -36,6 +44,10 @@ int main()
 	int powerup = 0;
 	// Text
 	Text text(window);
+	// Background
+	Background background(window);
+	// Language
+	bool english = true;
 	// ImGui fun
 	bool settings = false;
 	ImGui::SFML::Init(window);
@@ -56,39 +68,96 @@ int main()
 		if (sf::Keyboard::isKeyPressed(sf::Keyboard::F11) || settings)
 		{
 			settings = true;
-			ImGui::Begin("Settings");
-			if (ImGui::Button("Fullscreen"))
+			if (english)
 			{
-				window.close();
-				window.create(sf::VideoMode(1920.0f, 1080.0f), "Brick Breaker", sf::Style::Fullscreen);
-				window.setVerticalSyncEnabled(true);
-				barrier.resize(world, window);
-				p1.resize(world, window);
-				// Resize text
-				text.resize(window);
-				// Resize ball
-				b1.resize(world, window, dif);
-				// Resize bricks
-				bricks[0].resize();
+				ImGui::Begin("Settings");
+				if (ImGui::Button("Fullscreen"))
+				{
+					window.close();
+					window.create(sf::VideoMode(1920.0f, 1080.0f), "Brick Breaker", sf::Style::Fullscreen);
+					window.setVerticalSyncEnabled(true);
+					barrier.resize(world, window);
+					p1.resize(world, window);
+					// Resize text
+					text.resize(window);
+					// Resize ball
+					b1.resize(world, window, dif);
+					// Resize bricks
+					bricks[0].resize();
+					// Resize background
+					background.resize(window);
+				}
+				if (ImGui::Button("Default"))
+				{
+					window.close();
+					window.create(sf::VideoMode(1200.0f, 675.0f), "Brick Breaker", sf::Style::Default);
+					window.setVerticalSyncEnabled(true);
+					barrier.resize(world, window);
+					p1.resize(world, window);
+					// Resize text
+					text.resize(window);
+					// Resize ball
+					b1.resize(world, window, dif);
+					// Resize bricks
+					bricks[0].resize();
+					// Resize background
+					background.resize(window);
+				}
+				if (ImGui::Button("French"))
+				{
+					english = false;
+				}
+				if (ImGui::Button("Quit"))
+				{
+					window.close();
+				}
+				ImGui::End();
 			}
-			if (ImGui::Button("Default"))
+			else
 			{
-				window.close();
-				window.create(sf::VideoMode(1200.0f, 675.0f), "Brick Breaker", sf::Style::Default);
-				window.setVerticalSyncEnabled(true);
-				barrier.resize(world, window);
-				p1.resize(world, window);
-				// Resize text
-				text.resize(window);
-				// Resize ball
-				b1.resize(world, window, dif);
-				// Resize bricks
+				ImGui::Begin("Paramètres");
+				if (ImGui::Button("Plein écran"))
+				{
+					window.close();
+					window.create(sf::VideoMode(1920.0f, 1080.0f), "Brick Breaker", sf::Style::Fullscreen);
+					window.setVerticalSyncEnabled(true);
+					barrier.resize(world, window);
+					p1.resize(world, window);
+					// Resize text
+					text.resize(window);
+					// Resize ball
+					b1.resize(world, window, dif);
+					// Resize bricks
+					bricks[0].resize();
+					// Resize background
+					background.resize(window);
+				}
+				if (ImGui::Button("Défaut"))
+				{
+					window.close();
+					window.create(sf::VideoMode(1200.0f, 675.0f), "Brick Breaker", sf::Style::Default);
+					window.setVerticalSyncEnabled(true);
+					barrier.resize(world, window);
+					p1.resize(world, window);
+					// Resize text
+					text.resize(window);
+					// Resize ball
+					b1.resize(world, window, dif);
+					// Resize bricks
+					bricks[0].resize();
+					// Resize background
+					background.resize(window);
+				}
+				if (ImGui::Button("Anglais"))
+				{
+					english = true;
+				}
+				if (ImGui::Button("Quitter"))
+				{
+					window.close();
+				}
+				ImGui::End();
 			}
-			if (ImGui::Button("Quit"))
-			{
-				window.close();
-			}
-			ImGui::End();
 		}
 		if (sf::Keyboard::isKeyPressed(sf::Keyboard::F12))
 		{
@@ -98,6 +167,7 @@ int main()
 		// Brick loop
 		window.clear();
 		world.Step(1.0 / 60, int32(8), int32(3));
+		background.update(window);
 		text.update_text(window, powerup); // Text for score
 		if (bricks.empty())
 		{
