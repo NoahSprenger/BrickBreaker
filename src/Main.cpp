@@ -4,6 +4,7 @@
 #include "Menu.h"
 #include "Paddle.cpp"
 #include "Sounds.cpp"
+#include "Text.cpp"
 #include "physics.h"
 #include <imgui/imgui-SFML.h>
 #include <imgui/imgui.h>
@@ -21,7 +22,7 @@ int main()
 	bricks[0].refill_vector(world, dif, bricks);
 	sf::RenderWindow window;
 	window.create(sf::VideoMode(1200.0f, 675.0f), "Brick Breaker", sf::Style::Default);
-	window.setFramerateLimit(60);
+	window.setVerticalSyncEnabled(true);
 	// From Barriers.cpp
 	Barriers barrier(world, window);
 	// From Ball.cpp
@@ -33,6 +34,8 @@ int main()
 	Sounds ball;
 	// Counters
 	int powerup = 0;
+	// Text
+	Text text(window);
 	// ImGui fun
 	bool settings = false;
 	ImGui::SFML::Init(window);
@@ -58,21 +61,31 @@ int main()
 			{
 				window.close();
 				window.create(sf::VideoMode(1920.0f, 1080.0f), "Brick Breaker", sf::Style::Fullscreen);
-				window.setFramerateLimit(60);
+				window.setVerticalSyncEnabled(true);
 				barrier.resize(world, window);
 				p1.resize(world, window);
-				// no need to resize ball into the window
+				// Resize text
+				text.resize(window);
+				// Resize ball
+				b1.resize(world, window, dif);
+				// Resize bricks
+				bricks[0].resize();
 			}
 			if (ImGui::Button("Default"))
 			{
 				window.close();
 				window.create(sf::VideoMode(1200.0f, 675.0f), "Brick Breaker", sf::Style::Default);
-				window.setFramerateLimit(60);
+				window.setVerticalSyncEnabled(true);
 				barrier.resize(world, window);
 				p1.resize(world, window);
-				// Still need to resize ball into the window
+				// Resize text
+				text.resize(window);
+				// Resize ball
+				b1.resize(world, window, dif);
+				// Resize bricks
 			}
-			if (ImGui::Button("Quit")) {
+			if (ImGui::Button("Quit"))
+			{
 				window.close();
 			}
 			ImGui::End();
@@ -85,6 +98,7 @@ int main()
 		// Brick loop
 		window.clear();
 		world.Step(1.0 / 60, int32(8), int32(3));
+		text.update_text(window, powerup); // Text for score
 		if (bricks.empty())
 		{
 			bricks[0].refill_vector(world, dif, bricks);

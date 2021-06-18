@@ -78,8 +78,8 @@ struct Paddle : public sf::RectangleShape
 		float x, y, height, width;
 		x = this->getPosition().x;
 		y = window.getSize().y * 0.9;
-		height = this->getSize().y;
-		width = this->getSize().x;
+		height = window.getSize().y / 67.5; // Allows for the paddle to stay proportinal
+		width = window.getSize().x / 12;	// Allows for the paddle to stay proportinal
 		world.DestroyBody(this->body);
 		b2BodyDef bodyDef;
 		bodyDef.position.Set((x + width / 2.0) / pixels_per_meter, (y + height / 2.0) / pixels_per_meter);

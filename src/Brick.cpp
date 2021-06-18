@@ -36,7 +36,6 @@ struct Brick : public sf::RectangleShape
 	}
 	void refill_vector(b2World& world, int& dif, std::vector<Brick>& bricks)
 	{
-		// Could make a vector for each row and that row then has a diffrent dificulty to break (e.g. two hits, three hits)
 		switch (dif)
 		{
 			case 1:
@@ -74,7 +73,9 @@ struct Brick : public sf::RectangleShape
 				break;
 		}
 	}
-
+	void resize()
+	{
+	}
 	b2Body* body;
 };
 
