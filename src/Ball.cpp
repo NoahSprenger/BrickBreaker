@@ -170,8 +170,35 @@ struct Ball : public sf::CircleShape
 	{
 	}
 	// powerup that makes the ball big
-	void big_ball()
+	void big_ball(b2World& world, sf::RenderWindow& window, int dif)
 	{
+		angle = this->body->GetAngle(); // Results in a bug of the ball stuck bouncing from wall to wall
+		int x = this->getPosition().x, y = this->getPosition().y, r = (window.getSize().x / 30);
+		world.DestroyBody(this->body);
+		speed = 250 * dif;
+		b2BodyDef bodyDef;
+		bodyDef.position.Set(x / pixels_per_meter, y / pixels_per_meter);
+		bodyDef.type = b2_dynamicBody;
+		bodyDef.linearDamping = 0.0;
+		b2CircleShape b2shape;
+
+		b2shape.m_radius = r / pixels_per_meter; // also need to fix the death collison to follow this standard of radius sizing
+
+		b2FixtureDef fixtureDef;
+		fixtureDef.density = 1.0;
+		fixtureDef.friction = 0.0;
+		fixtureDef.restitution = 1.0;
+		fixtureDef.shape = &b2shape;
+
+		body = world.CreateBody(&bodyDef);
+		body->CreateFixture(&fixtureDef);
+
+		// Read about the this operator
+		this->setRadius(r);
+		this->setOrigin(r, r);
+		this->setPosition(x, y);
+		this->setFillColor(sf::Color::White);
+		body->SetLinearVelocity(b2Vec2(speed / pixels_per_meter * cos(angle / deg_per_rad), speed / pixels_per_meter * sin(angle / deg_per_rad)));
 	}
 	// member variables
 	float speed, angle;

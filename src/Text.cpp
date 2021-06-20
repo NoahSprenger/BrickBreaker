@@ -13,9 +13,9 @@ struct Text : public sf::Text
 		this->setColor(sf::Color::Red);
 		this->setPosition(sf::Vector2f(10, window.getSize().y * 0.9));
 	}
-	void update_text(sf::RenderWindow& render, int hold)
+	void update_text(sf::RenderWindow& render, int powerup, int level)
 	{
-		this->setString("Score " + std::to_string(hold));
+		this->setString("Score " + std::to_string(powerup) + " Level " + std::to_string(level));
 		render.draw(*this);
 	}
 	void resize(sf::RenderWindow& window)

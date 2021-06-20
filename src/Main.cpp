@@ -8,6 +8,7 @@ a system to unlock backgrounds etc (if I get everything else done)*/
 #include "Ball.cpp"
 #include "Barriers.cpp"
 #include "Brick.cpp"
+#include "ImGuiStuff.cpp"
 #include "Menu.h"
 #include "Paddle.cpp"
 #include "Powerup.cpp"
@@ -31,6 +32,7 @@ int main()
 	sf::RenderWindow window;
 	window.create(sf::VideoMode(1200.0f, 675.0f), "Brick Breaker", sf::Style::Default);
 	window.setVerticalSyncEnabled(true);
+	// window.setFramerateLimit(60);
 	// From Barriers.cpp
 	Barriers barrier(world, window);
 	// From Ball.cpp
@@ -42,15 +44,14 @@ int main()
 	Sounds ball;
 	// Counters
 	int powerup = 0;
+	int level = 1;
 	// Text
 	Text text(window);
 	// Background
 	Background background(window);
-	// Language
-	bool english = true;
 	// ImGui fun
+	ImGuiStuff imgui_window(window);
 	bool settings = false;
-	ImGui::SFML::Init(window);
 	sf::Clock deltaClock;
 	sf::Event event;
 	while (window.isOpen() && !sf::Keyboard::isKeyPressed(sf::Keyboard::Escape))
@@ -68,96 +69,7 @@ int main()
 		if (sf::Keyboard::isKeyPressed(sf::Keyboard::F11) || settings)
 		{
 			settings = true;
-			if (english)
-			{
-				ImGui::Begin("Settings");
-				if (ImGui::Button("Fullscreen"))
-				{
-					window.close();
-					window.create(sf::VideoMode(1920.0f, 1080.0f), "Brick Breaker", sf::Style::Fullscreen);
-					window.setVerticalSyncEnabled(true);
-					barrier.resize(world, window);
-					p1.resize(world, window);
-					// Resize text
-					text.resize(window);
-					// Resize ball
-					b1.resize(world, window, dif);
-					// Resize bricks
-					bricks[0].resize();
-					// Resize background
-					background.resize(window);
-				}
-				if (ImGui::Button("Default"))
-				{
-					window.close();
-					window.create(sf::VideoMode(1200.0f, 675.0f), "Brick Breaker", sf::Style::Default);
-					window.setVerticalSyncEnabled(true);
-					barrier.resize(world, window);
-					p1.resize(world, window);
-					// Resize text
-					text.resize(window);
-					// Resize ball
-					b1.resize(world, window, dif);
-					// Resize bricks
-					bricks[0].resize();
-					// Resize background
-					background.resize(window);
-				}
-				if (ImGui::Button("French"))
-				{
-					english = false;
-				}
-				if (ImGui::Button("Quit"))
-				{
-					window.close();
-				}
-				ImGui::End();
-			}
-			else
-			{
-				ImGui::Begin("Paramètres");
-				if (ImGui::Button("Plein écran"))
-				{
-					window.close();
-					window.create(sf::VideoMode(1920.0f, 1080.0f), "Brick Breaker", sf::Style::Fullscreen);
-					window.setVerticalSyncEnabled(true);
-					barrier.resize(world, window);
-					p1.resize(world, window);
-					// Resize text
-					text.resize(window);
-					// Resize ball
-					b1.resize(world, window, dif);
-					// Resize bricks
-					bricks[0].resize();
-					// Resize background
-					background.resize(window);
-				}
-				if (ImGui::Button("Défaut"))
-				{
-					window.close();
-					window.create(sf::VideoMode(1200.0f, 675.0f), "Brick Breaker", sf::Style::Default);
-					window.setVerticalSyncEnabled(true);
-					barrier.resize(world, window);
-					p1.resize(world, window);
-					// Resize text
-					text.resize(window);
-					// Resize ball
-					b1.resize(world, window, dif);
-					// Resize bricks
-					bricks[0].resize();
-					// Resize background
-					background.resize(window);
-				}
-				if (ImGui::Button("Anglais"))
-				{
-					english = true;
-				}
-				if (ImGui::Button("Quitter"))
-				{
-					window.close();
-				}
-				ImGui::End();
-			}
+			imgui_window.loop(dif, world, window, text, barrier, p1, bricks, b1, background);
 		}
 		if (sf::Keyboard::isKeyPressed(sf::Keyboard::F12))
 		{
@@ -168,10 +80,11 @@ int main()
 		window.clear();
 		world.Step(1.0 / 60, int32(8), int32(3));
 		background.update(window);
-		text.update_text(window, powerup); // Text for score
+		text.update_text(window, powerup, level); // Text for score
 		if (bricks.empty())
 		{
 			bricks[0].refill_vector(world, dif, bricks);
+			level++; // Do someting with the level system
 		}
 		b1.deathCollision(world, window, barrier.barriers[0], powerup, b1, p1, bricks, dif);
 		p1.updatePosition(window);
@@ -190,11 +103,15 @@ int main()
 					case 2:
 						p1.faster_paddle();
 						break;
+					case 4:
+						b1.big_ball(world, window, dif);
+						break;
 					case 5:
 						p1.updateSize(world, 300);
+						b1.resize(world, window, dif);
 						break;
 					case 10:
-						p1.updateSize(world, 100);
+						p1.updateSize(world, window.getSize().x / 12);
 					default:
 						break;
 				}

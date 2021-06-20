@@ -43,7 +43,7 @@ struct Brick : public sf::RectangleShape
 				{
 					for (int j = 0; j < 1; j++)
 					{
-						bricks.push_back(Brick(world, 40 + i * 120, 40 + j * 30, 60, 20));
+						bricks.push_back(Brick(world, 40 + i * 120, 40 + j * 30, 60, 20)); // width, height, and position should be porportinal to the window size
 						bricks.back().setFillColor(sf::Color::Cyan);
 					}
 				}
