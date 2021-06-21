@@ -34,7 +34,7 @@ struct Brick : public sf::RectangleShape
 		this->setRotation(body->GetAngle() * deg_per_rad);
 		render.draw(*this);
 	}
-	void refill_vector(b2World& world, int& dif, std::vector<Brick>& bricks)
+	void refill_vector(b2World& world, sf::RenderWindow& window, int& dif, std::vector<Brick>& bricks)
 	{
 		switch (dif)
 		{
@@ -43,7 +43,7 @@ struct Brick : public sf::RectangleShape
 				{
 					for (int j = 0; j < 1; j++)
 					{
-						bricks.push_back(Brick(world, 40 + i * 120, 40 + j * 30, 60, 20)); // width, height, and position should be porportinal to the window size
+						bricks.push_back(Brick(world, 40 + i * (window.getSize().x / 10), 40 + j * (window.getSize().y / 22.5), window.getSize().x / 20, window.getSize().y / 33.75)); // width, height, and position should be porportinal to the window size
 						bricks.back().setFillColor(sf::Color::Cyan);
 					}
 				}
@@ -53,7 +53,7 @@ struct Brick : public sf::RectangleShape
 				{
 					for (int j = 0; j < 3; j++)
 					{
-						bricks.push_back(Brick(world, 40 + i * 120, 40 + j * 30, 60, 20));
+						bricks.push_back(Brick(world, 40 + i * (window.getSize().x / 10), 40 + j * (window.getSize().y / 22.5), window.getSize().x / 20, window.getSize().y / 33.75));
 						bricks.back().setFillColor(sf::Color::Cyan);
 						// physics::setCollisionID(bricks.back().body, -1); // try and get to smash through the bricks
 					}
@@ -64,7 +64,7 @@ struct Brick : public sf::RectangleShape
 				{
 					for (int j = 0; j < 5; j++)
 					{
-						bricks.push_back(Brick(world, 40 + i * 120, 40 + j * 30, 60, 20));
+						bricks.push_back(Brick(world, 40 + i * (window.getSize().x / 10), 40 + j * (window.getSize().y / 22.5), window.getSize().x / 20, window.getSize().y / 33.75));
 						bricks.back().setFillColor(sf::Color::Cyan);
 					}
 				}
@@ -75,6 +75,7 @@ struct Brick : public sf::RectangleShape
 	}
 	void resize()
 	{
+		// grab relivant values, delete and redraw old bricks with new size
 	}
 	b2Body* body;
 };

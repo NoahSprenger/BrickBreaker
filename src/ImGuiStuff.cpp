@@ -33,7 +33,7 @@ struct ImGuiStuff
 				// Resize text
 				text.resize(window);
 				// Resize ball
-				b1.resize(world, window, dif);
+				b1.resize(world, window, dif, p1);
 				// Resize bricks
 				bricks[0].resize();
 				// Resize background
@@ -50,7 +50,7 @@ struct ImGuiStuff
 				// Resize text
 				text.resize(window);
 				// Resize ball
-				b1.resize(world, window, dif);
+				b1.resize(world, window, dif, p1);
 				// Resize bricks
 				bricks[0].resize();
 				// Resize background
@@ -81,7 +81,7 @@ struct ImGuiStuff
 				// Resize text
 				text.resize(window);
 				// Resize ball
-				b1.resize(world, window, dif);
+				b1.resize(world, window, dif, p1);
 				// Resize bricks
 				bricks[0].resize();
 				// Resize background
@@ -98,7 +98,7 @@ struct ImGuiStuff
 				// Resize text
 				text.resize(window);
 				// Resize ball
-				b1.resize(world, window, dif);
+				b1.resize(world, window, dif, p1);
 				// Resize bricks
 				bricks[0].resize();
 				// Resize background

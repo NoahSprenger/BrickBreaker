@@ -28,9 +28,9 @@ int main()
 	b2World world(b2Vec2(0.0, 0.0));
 	Menu menu;
 	int dif = menu.Run_Menu();
-	bricks[0].refill_vector(world, dif, bricks);
 	sf::RenderWindow window;
 	window.create(sf::VideoMode(1200.0f, 675.0f), "Brick Breaker", sf::Style::Default);
+	bricks[0].refill_vector(world, window, dif, bricks);
 	window.setVerticalSyncEnabled(true);
 	// window.setFramerateLimit(60);
 	// From Barriers.cpp
@@ -83,7 +83,7 @@ int main()
 		text.update_text(window, powerup, level); // Text for score
 		if (bricks.empty())
 		{
-			bricks[0].refill_vector(world, dif, bricks);
+			bricks[0].refill_vector(world, window, dif, bricks);
 			level++; // Do someting with the level system
 		}
 		b1.deathCollision(world, window, barrier.barriers[0], powerup, b1, p1, bricks, dif);
@@ -108,7 +108,7 @@ int main()
 						break;
 					case 5:
 						p1.updateSize(world, 300);
-						b1.resize(world, window, dif);
+						b1.resize(world, window, dif, p1);
 						break;
 					case 10:
 						p1.updateSize(world, window.getSize().x / 12);
@@ -123,6 +123,7 @@ int main()
 		}
 		ImGui::SFML::Render(window);
 		window.display();
+		std::cout << bricks[0].getSize().x << std::endl;
 	}
 	ImGui::SFML::Shutdown();
 	return 0;

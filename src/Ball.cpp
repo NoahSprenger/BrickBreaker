@@ -112,7 +112,7 @@ struct Ball : public sf::CircleShape
 						world.DestroyBody(bricks[i].body);
 					}
 					bricks.clear();
-					bricks[0].refill_vector(world, dif, bricks);
+					bricks[0].refill_vector(world, window, dif, bricks);
 					return true;
 				}
 			}
@@ -134,11 +134,12 @@ struct Ball : public sf::CircleShape
 		}
 		return false;
 	}
-	void resize(b2World& world, sf::RenderWindow& window, int dif)
+	void resize(b2World& world, sf::RenderWindow& window, int dif, Paddle p1)
 	{
 		// angle = this->body->GetAngle(); // Results in a bug of the ball stuck bouncing from wall to wall
 		angle = 90;
-		int x = this->getPosition().x, y = this->getPosition().y, r = (window.getSize().x / 30) / 2;
+		// By allowing x to be the paddle position it resolves the bug of the ball being outside of the resized window after resizing
+		int x = p1.getPosition().x + p1.getSize().x / 2, y = this->getPosition().y, r = (window.getSize().x / 30) / 2;
 		world.DestroyBody(this->body);
 		speed = 250 * dif;
 		b2BodyDef bodyDef;
