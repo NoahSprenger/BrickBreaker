@@ -26,7 +26,6 @@ struct Brick : public sf::RectangleShape
 		this->setOrigin(width / 2.0, height / 2.0);
 		this->setPosition(x, y);
 		this->setFillColor(sf::Color::White);
-		// body->SetUserData(shape);
 	}
 	void updatePosition(sf::RenderWindow& render)
 	{
@@ -54,7 +53,7 @@ struct Brick : public sf::RectangleShape
 					for (int j = 0; j < 3; j++)
 					{
 						bricks.push_back(Brick(world, 40 + i * (window.getSize().x / 10), 40 + j * (window.getSize().y / 22.5), window.getSize().x / 20, window.getSize().y / 33.75));
-						bricks.back().setFillColor(sf::Color::Cyan);
+						bricks.back().setFillColor(sf::Color::Red);
 						// physics::setCollisionID(bricks.back().body, -1); // try and get to smash through the bricks
 					}
 				}
@@ -73,9 +72,13 @@ struct Brick : public sf::RectangleShape
 				break;
 		}
 	}
-	void resize()
+	void empty_vector(b2World& world, std::vector<Brick>& bricks)
 	{
-		// grab relivant values, delete and redraw old bricks with new size
+		for (long unsigned int i = 0; i < bricks.size(); i++)
+		{
+			world.DestroyBody(bricks[i].body);
+		}
+		bricks.clear();
 	}
 	b2Body* body;
 };

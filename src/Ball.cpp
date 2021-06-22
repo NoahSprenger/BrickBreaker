@@ -50,7 +50,7 @@ struct Ball : public sf::CircleShape
 		render.draw(*this);
 	}
 	// Collision with paddle and ball
-	bool checkCollision(const Paddle& p1) // Calls the memory address instead of copying
+	bool checkCollision(const Paddle& p1, bool wall, bool left) // Calls the memory address instead of copying
 	{
 		for (b2ContactEdge* edge = body->GetContactList(); edge; edge = edge->next)
 		{
@@ -58,15 +58,34 @@ struct Ball : public sf::CircleShape
 			{
 				if (edge->contact->IsTouching())
 				{
-					// Bounce ball of paddle
-					angle = (this->getPosition().x - p1.getPosition().x) / (p1.getSize().x / 2) * 70 - 90;
-					body->SetLinearVelocity(b2Vec2(20 * cos(angle / deg_per_rad), 20 * sin(angle / deg_per_rad)));
+					// Bounce ball of paddle and walls
+					// right wall just bounces it down and left bounces it up
+					if (wall)
+					{
+						if (left)
+						{
+							angle = 45;
+						}
+						else
+						{
+							angle = 135;
+						}
+						body->SetLinearVelocity(b2Vec2(20 * cos(angle / deg_per_rad), 20 * sin(angle / deg_per_rad)));
+					}
+					else
+					{
+						angle = (this->getPosition().x - p1.getPosition().x) / (p1.getSize().x / 2) * 70 - 90;
+						body->SetLinearVelocity(b2Vec2(20 * cos(angle / deg_per_rad), 20 * sin(angle / deg_per_rad)));
+					}
 					return true;
 				}
 			}
 		}
 		return false;
 	}
+
+	// when the ball hits the side walls make the ball bounce a certain way kinda like the trump game
+
 	// Collision with ball and floor for death
 	bool deathCollision(b2World& world, sf::RenderWindow& window, const Paddle& barrier, int& powerup, Ball& b1, Paddle& p1, std::vector<Brick>& bricks, int dif) // Calls the memory address instead of copying
 	{
@@ -139,7 +158,38 @@ struct Ball : public sf::CircleShape
 		// angle = this->body->GetAngle(); // Results in a bug of the ball stuck bouncing from wall to wall
 		angle = 90;
 		// By allowing x to be the paddle position it resolves the bug of the ball being outside of the resized window after resizing
-		int x = p1.getPosition().x + p1.getSize().x / 2, y = this->getPosition().y, r = (window.getSize().x / 30) / 2;
+		int x = p1.getPosition().x + p1.getSize().x / 2, y = window.getSize().y / 3, r = (window.getSize().x / 30) / 2;
+		world.DestroyBody(this->body);
+		speed = 250 * dif;
+		b2BodyDef bodyDef;
+		bodyDef.position.Set(x / pixels_per_meter, y / pixels_per_meter);
+		bodyDef.type = b2_dynamicBody;
+		bodyDef.linearDamping = 0.0;
+		b2CircleShape b2shape;
+
+		b2shape.m_radius = r / pixels_per_meter; // also need to fix the death collison to follow this standard of radius sizing
+
+		b2FixtureDef fixtureDef;
+		fixtureDef.density = 1.0;
+		fixtureDef.friction = 0.0;
+		fixtureDef.restitution = 1.0;
+		fixtureDef.shape = &b2shape;
+
+		body = world.CreateBody(&bodyDef);
+		body->CreateFixture(&fixtureDef);
+
+		// Read about the this operator
+		this->setRadius(r);
+		this->setOrigin(r, r);
+		this->setPosition(x, y);
+		this->setFillColor(sf::Color::White);
+		body->SetLinearVelocity(b2Vec2(speed / pixels_per_meter * cos(angle / deg_per_rad), speed / pixels_per_meter * sin(angle / deg_per_rad)));
+	}
+	void resize_in_game(b2World& world, sf::RenderWindow& window, int dif, Paddle p1)
+	{
+		angle = this->body->GetAngle(); // Results in a bug of the ball stuck bouncing from wall to wall
+		// By allowing x to be the paddle position it resolves the bug of the ball being outside of the resized window after resizing
+		int x = this->getPosition().x, y = getPosition().y, r = (window.getSize().x / 30) / 2;
 		world.DestroyBody(this->body);
 		speed = 250 * dif;
 		b2BodyDef bodyDef;
@@ -171,10 +221,10 @@ struct Ball : public sf::CircleShape
 	{
 	}
 	// powerup that makes the ball big
-	void big_ball(b2World& world, sf::RenderWindow& window, int dif)
+	void big_ball(b2World& world, int dif, int r, float angle)
 	{
-		angle = this->body->GetAngle(); // Results in a bug of the ball stuck bouncing from wall to wall
-		int x = this->getPosition().x, y = this->getPosition().y, r = (window.getSize().x / 30);
+		// angle = this->body->GetAngle(); // Results in a bug of the ball stuck bouncing from wall to wall
+		int x = this->getPosition().x, y = this->getPosition().y;
 		world.DestroyBody(this->body);
 		speed = 250 * dif;
 		b2BodyDef bodyDef;

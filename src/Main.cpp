@@ -1,6 +1,6 @@
 // ! TO DO ! //
 /* multiple lives and levels,
-powerups, fullscreen resizing,
+powerups,
 add textures to make it more visually appealing,
 add french support, create a pause function to pause the game,
 a system to unlock backgrounds etc (if I get everything else done)*/
@@ -49,6 +49,8 @@ int main()
 	Text text(window);
 	// Background
 	Background background(window);
+	// Powerups
+	Powerup power;
 	// ImGui fun
 	ImGuiStuff imgui_window(window);
 	bool settings = false;
@@ -69,13 +71,16 @@ int main()
 		if (sf::Keyboard::isKeyPressed(sf::Keyboard::F11) || settings)
 		{
 			settings = true;
-			imgui_window.loop(dif, world, window, text, barrier, p1, bricks, b1, background);
+			imgui_window.loop(dif, powerup, level, world, window, text, barrier, p1, bricks, b1, background);
 		}
 		if (sf::Keyboard::isKeyPressed(sf::Keyboard::F12))
 		{
 			settings = false;
 		}
-		b1.checkCollision(p1);
+		b1.checkCollision(p1, false, false);
+		// fixes the bug of the ball endlessly bouncing wall to wall and now adds an elments of complexity
+		b1.checkCollision(barrier.barriers[1], true, false);
+		b1.checkCollision(barrier.barriers[3], true, true);
 		// Brick loop
 		window.clear();
 		world.Step(1.0 / 60, int32(8), int32(3));
@@ -97,23 +102,10 @@ int main()
 				world.DestroyBody(bricks[i].body);
 				bricks.erase(bricks.begin() + i);
 				powerup++;
-				// Use a random number between 5 and 10 to do a random powerup (create more powerups)
-				switch (powerup)
+				if (powerup % 5 == 0)
 				{
-					case 2:
-						p1.faster_paddle();
-						break;
-					case 4:
-						b1.big_ball(world, window, dif);
-						break;
-					case 5:
-						p1.updateSize(world, 300);
-						b1.resize(world, window, dif, p1);
-						break;
-					case 10:
-						p1.updateSize(world, window.getSize().x / 12);
-					default:
-						break;
+					power.reset(world, window, dif, p1, b1);
+					power.select_powerup(world, dif, window.getSize().x / 30, b1, p1);
 				}
 			}
 		}
@@ -123,7 +115,6 @@ int main()
 		}
 		ImGui::SFML::Render(window);
 		window.display();
-		std::cout << bricks[0].getSize().x << std::endl;
 	}
 	ImGui::SFML::Shutdown();
 	return 0;

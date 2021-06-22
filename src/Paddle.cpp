@@ -25,8 +25,8 @@ struct Paddle : public sf::RectangleShape
 		this->setOrigin(width / 2.0, height / 2.0);
 		this->setPosition(x, y);
 		this->setFillColor(sf::Color::White);
-		left = -10;
-		right = 10;
+		left = -20;
+		right = 20;
 	}
 	void updatePosition(sf::RenderWindow& window)
 	{
@@ -103,6 +103,11 @@ struct Paddle : public sf::RectangleShape
 	}
 	// Powerup for a faster paddle
 	void faster_paddle()
+	{
+		right = 30;
+		left = -30;
+	}
+	void regular_speed()
 	{
 		right = 20;
 		left = -20;
