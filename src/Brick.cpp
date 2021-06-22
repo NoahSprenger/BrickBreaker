@@ -43,7 +43,7 @@ struct Brick : public sf::RectangleShape
 					for (int j = 0; j < 1; j++)
 					{
 						bricks.push_back(Brick(world, 40 + i * (window.getSize().x / 10), 40 + j * (window.getSize().y / 22.5), window.getSize().x / 20, window.getSize().y / 33.75)); // width, height, and position should be porportinal to the window size
-						bricks.back().setFillColor(sf::Color::Cyan);
+						bricks.back().setFillColor(sf::Color::Blue);
 					}
 				}
 				break;
@@ -53,7 +53,7 @@ struct Brick : public sf::RectangleShape
 					for (int j = 0; j < 3; j++)
 					{
 						bricks.push_back(Brick(world, 40 + i * (window.getSize().x / 10), 40 + j * (window.getSize().y / 22.5), window.getSize().x / 20, window.getSize().y / 33.75));
-						bricks.back().setFillColor(sf::Color::Red);
+						bricks.back().setFillColor(sf::Color::Blue);
 						// physics::setCollisionID(bricks.back().body, -1); // try and get to smash through the bricks
 					}
 				}
@@ -64,7 +64,7 @@ struct Brick : public sf::RectangleShape
 					for (int j = 0; j < 5; j++)
 					{
 						bricks.push_back(Brick(world, 40 + i * (window.getSize().x / 10), 40 + j * (window.getSize().y / 22.5), window.getSize().x / 20, window.getSize().y / 33.75));
-						bricks.back().setFillColor(sf::Color::Cyan);
+						bricks.back().setFillColor(sf::Color::Blue);
 					}
 				}
 				break;

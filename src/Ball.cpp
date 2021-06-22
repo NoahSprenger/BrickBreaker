@@ -185,7 +185,7 @@ struct Ball : public sf::CircleShape
 		this->setFillColor(sf::Color::White);
 		body->SetLinearVelocity(b2Vec2(speed / pixels_per_meter * cos(angle / deg_per_rad), speed / pixels_per_meter * sin(angle / deg_per_rad)));
 	}
-	void resize_in_game(b2World& world, sf::RenderWindow& window, int dif, Paddle p1)
+	void resize_in_game(b2World& world, sf::RenderWindow& window, int dif)
 	{
 		angle = this->body->GetAngle(); // Results in a bug of the ball stuck bouncing from wall to wall
 		// By allowing x to be the paddle position it resolves the bug of the ball being outside of the resized window after resizing
@@ -219,6 +219,11 @@ struct Ball : public sf::CircleShape
 	// powerup that explodes the ball into multiple balls
 	void exploding_ball()
 	{
+	}
+	// powerup that makes the balls linear velocity slower than usual
+	void slow()
+	{
+		speed = 250;
 	}
 	// powerup that makes the ball big
 	void big_ball(b2World& world, int dif, int r, float angle)

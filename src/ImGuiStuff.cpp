@@ -5,6 +5,7 @@
 #include "Barriers.cpp"
 #include "Brick.cpp"
 #include "Paddle.cpp"
+#include "Powerup.cpp"
 #include "Text.cpp"
 #include <SFML/Graphics.hpp>
 #include <imgui/imgui-SFML.h>
@@ -16,7 +17,7 @@ struct ImGuiStuff
 	{
 		ImGui::SFML::Init(window);
 	}
-	void loop(int dif, int& powerup, int& level, b2World& world, sf::RenderWindow& window, Text& text, Barriers& barrier, Paddle& p1, std::vector<Brick>& bricks, Ball& b1, Background& background)
+	void loop(Powerup& power, int dif, int& powerup, int& level, b2World& world, sf::RenderWindow& window, Barriers& barrier, Paddle& p1, std::vector<Brick>& bricks, Ball& b1, Background& background)
 	{
 		if (english)
 		{
@@ -30,8 +31,8 @@ struct ImGuiStuff
 				// window.setFramerateLimit(60);
 				barrier.resize(world, window);
 				p1.resize(world, window);
-				// Resize text
-				text.resize(window);
+				// Reset text
+				power.words = "";
 				// Resize ball
 				b1.resize(world, window, dif, p1);
 				// Resize background
@@ -51,8 +52,8 @@ struct ImGuiStuff
 				// window.setFramerateLimit(60);
 				barrier.resize(world, window);
 				p1.resize(world, window);
-				// Resize text
-				text.resize(window);
+				// Reset text
+				power.words = "";
 				// Resize ball
 				b1.resize(world, window, dif, p1);
 				// Resize background
@@ -86,8 +87,8 @@ struct ImGuiStuff
 				// window.setFramerateLimit(60);
 				barrier.resize(world, window);
 				p1.resize(world, window);
-				// Resize text
-				text.resize(window);
+				// Reset text
+				power.words = "";
 				// Resize ball
 				b1.resize(world, window, dif, p1);
 				// Resize background
@@ -107,8 +108,8 @@ struct ImGuiStuff
 				// window.setFramerateLimit(60);
 				barrier.resize(world, window);
 				p1.resize(world, window);
-				// Resize text
-				text.resize(window);
+				// Reset text
+				power.words = "";
 				// Resize ball
 				b1.resize(world, window, dif, p1);
 				// Resize background

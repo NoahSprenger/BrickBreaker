@@ -17,17 +17,22 @@ struct Powerup
 		{
 			case 0:
 				p1.faster_paddle();
+				words = "Faster Paddle";
 				break;
 			case 1:
 				ball.big_ball(world, dif, r, ball.body->GetAngle());
+				words = "Bigger Ball";
 				break;
 			case 2:
 				p1.updateSize(world, 300);
+				words = "Bigger Paddle";
 				break;
 			case 3:
-				std::cout << "another powerup" << std::endl;
+				ball.slow();
+				words = "Slow Ball";
 				break;
 			default:
+				words = "";
 				break;
 		}
 	}
@@ -39,7 +44,7 @@ struct Powerup
 				p1.regular_speed();
 				break;
 			case 1:
-				ball.resize_in_game(world, window, dif, p1);
+				ball.resize_in_game(world, window, dif);
 				break;
 			case 2:
 				p1.resize(world, window);
@@ -47,8 +52,8 @@ struct Powerup
 				break;
 		}
 		rand_power = rand() % 4;
-		std::cout << rand_power << std::endl;
 	}
+	std::string words;
 	int rand_power;
 };
 
