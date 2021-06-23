@@ -1,10 +1,8 @@
 // ! TO DO ! //
-/* multiple lives and levels,
-powerups,
-add textures to make it more visually appealing,
+/*  more powerups,
 update how to play or make a tutorial,
 add french support, create a pause function to pause the game,
-a system to unlock backgrounds etc (if I get everything else done)*/
+interface the nucleo-board angle finder*/
 #include "Background.cpp"
 #include "Ball.cpp"
 #include "Barriers.cpp"
@@ -108,6 +106,7 @@ int main()
 		{
 			bricks[0].refill_vector(world, window, dif, bricks);
 			level++; // Do someting with the level system
+			background.new_background();
 		}
 		if (b1.deathCollision(world, window, barrier.barriers[0], powerup, b1, p1, bricks, dif))
 		{

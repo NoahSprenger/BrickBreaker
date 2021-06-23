@@ -48,6 +48,10 @@ struct Powerup
 				break;
 			case 2:
 				p1.resize(world, window);
+				break;
+			case 3:
+				ball.speed = 250 * dif;
+				break;
 			default:
 				break;
 		}
