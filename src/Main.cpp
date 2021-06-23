@@ -116,21 +116,6 @@ int main()
 		}
 		p1.updatePosition(window);
 		b1.updatePosition(window);
-		// for (long unsigned int i = 0; i < bricks.size(); i++)
-		// {
-		// 	if (b1.checkCollision(bricks[i]))
-		// 	{
-		// 		ball.play_ball();
-		// 		world.DestroyBody(bricks[i].body);
-		// 		bricks.erase(bricks.begin() + i);
-		// 		powerup++;
-		// 		if (powerup % 5 == 0)
-		// 		{
-		// 			power.reset(world, window, dif, p1, b1);
-		// 			power.select_powerup(world, dif, window.getSize().x / 30, b1, p1);
-		// 		}
-		// 	}
-		// }
 		for (auto i : bricks)
 		{ // I like this way
 			i.updatePosition(window);
