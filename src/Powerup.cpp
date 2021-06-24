@@ -31,6 +31,10 @@ struct Powerup
 				ball.slow();
 				words = "Slow Ball";
 				break;
+			case 4:
+				ball.no_death(true);
+				words = "No Death";
+				break;
 			default:
 				words = "";
 				break;
@@ -52,10 +56,12 @@ struct Powerup
 			case 3:
 				ball.speed = 250 * dif;
 				break;
+			case 4:
+				ball.no_death(false);
 			default:
 				break;
 		}
-		rand_power = rand() % 4;
+		rand_power = rand() % 5;
 	}
 	std::string words;
 	int rand_power;

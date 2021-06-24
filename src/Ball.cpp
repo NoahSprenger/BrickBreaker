@@ -7,7 +7,7 @@
 struct Ball : public sf::CircleShape
 {
 	// Constructor
-	Ball(b2World& world, float x, float y, float r, float s, float a, b2BodyType type = b2_dynamicBody)
+	Ball(b2World& world, float x, float y, float r, float s, float a, bool texture, b2BodyType type = b2_dynamicBody)
 	{
 		speed = s;
 		angle = a;
@@ -33,10 +33,16 @@ struct Ball : public sf::CircleShape
 		this->setRadius(r);
 		this->setOrigin(r, r);
 		this->setPosition(x, y);
-		this->setFillColor(sf::Color::White);
-		ball_txt.loadFromFile("content/ball.png");
-		this->setTexture(&ball_txt);
-
+		// this->setFillColor(sf::Color::White);
+		if (texture)
+		{
+			ball_txt.loadFromFile("content/ball.png");
+			this->setTexture(&ball_txt);
+		}
+		else
+		{
+			this->setFillColor(sf::Color::White);
+		}
 		// body->SetUserData(this);
 		body->SetLinearVelocity(b2Vec2(speed / pixels_per_meter * cos(angle / deg_per_rad), speed / pixels_per_meter * sin(angle / deg_per_rad)));
 	}
@@ -58,8 +64,7 @@ struct Ball : public sf::CircleShape
 			{
 				if (edge->contact->IsTouching())
 				{
-					// Bounce ball of paddle and walls
-					// right wall just bounces it down and left bounces it up
+					// Bounce ball off paddle and walls
 					if (wall)
 					{
 						if (left)
@@ -182,7 +187,7 @@ struct Ball : public sf::CircleShape
 		this->setRadius(r);
 		this->setOrigin(r, r);
 		this->setPosition(x, y);
-		this->setFillColor(sf::Color::White);
+		// this->setFillColor(sf::Color::White);
 		body->SetLinearVelocity(b2Vec2(speed / pixels_per_meter * cos(angle / deg_per_rad), speed / pixels_per_meter * sin(angle / deg_per_rad)));
 	}
 	void resize_in_game(b2World& world, sf::RenderWindow& window, int dif)
@@ -213,12 +218,8 @@ struct Ball : public sf::CircleShape
 		this->setRadius(r);
 		this->setOrigin(r, r);
 		this->setPosition(x, y);
-		this->setFillColor(sf::Color::White);
+		// this->setFillColor(sf::Color::White);
 		body->SetLinearVelocity(b2Vec2(speed / pixels_per_meter * cos(angle / deg_per_rad), speed / pixels_per_meter * sin(angle / deg_per_rad)));
-	}
-	// powerup that explodes the ball into multiple balls
-	void exploding_ball()
-	{
 	}
 	// powerup that makes the balls linear velocity slower than usual
 	void slow()
@@ -253,11 +254,16 @@ struct Ball : public sf::CircleShape
 		this->setRadius(r);
 		this->setOrigin(r, r);
 		this->setPosition(x, y);
-		this->setFillColor(sf::Color::White);
+		// this->setFillColor(sf::Color::White);
 		body->SetLinearVelocity(b2Vec2(speed / pixels_per_meter * cos(angle / deg_per_rad), speed / pixels_per_meter * sin(angle / deg_per_rad)));
+	}
+	void no_death(bool dead)
+	{
+		death = dead;
 	}
 	// member variables
 	float speed, angle;
+	bool death = false;
 	b2Body* body; // box2d body
 	sf::Texture ball_txt;
 };

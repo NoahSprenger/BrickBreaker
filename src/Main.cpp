@@ -1,8 +1,5 @@
 // ! TO DO ! //
-/*  more powerups,
-update how to play or make a tutorial,
-add french support, create a pause function to pause the game,
-interface the nucleo-board angle finder*/
+/*  more powerups*/
 #include "Background.cpp"
 #include "Ball.cpp"
 #include "Barriers.cpp"
@@ -32,15 +29,21 @@ int main()
 	bricks[0].refill_vector(world, window, dif, bricks);
 	window.setVerticalSyncEnabled(true);
 	// window.setFramerateLimit(60);
+	// Brick for powerups
+	Brick target(world, -100, -100, 30, 30); // rendered off screen
+	sf::Texture star;
+	star.loadFromFile("content/star.png");
+	target.setTexture(&star);
 	// From Barriers.cpp
 	Barriers barrier(world, window);
 	// From Ball.cpp
-	Ball b1(world, window.getSize().x / 2, 300, 20, 250 * dif, 90);
+	Ball b1(world, window.getSize().x / 2, 300, 20, 250 * dif, 90, true);
 	// physics::setCollisionID(b1.body, -1);
 	// From Paddle.cpp
 	Paddle p1(world, window.getSize().x / 2 - 50, window.getSize().y * 0.9, 100, 10);
 	// Sound stuff
 	Sounds ball;
+	ball.play_main();
 	// Counters
 	int powerup = 0;
 	int level = 1;
@@ -52,7 +55,7 @@ int main()
 	// Powerups
 	Powerup power;
 	// ImGui fun
-	ImGuiStuff imgui_window(window);
+	ImGuiStuff imgui_window(window, dif);
 	bool settings = false;
 	sf::Clock deltaClock;
 	sf::Event event;
@@ -71,16 +74,24 @@ int main()
 		if (sf::Keyboard::isKeyPressed(sf::Keyboard::F11) || settings)
 		{
 			settings = true;
-			imgui_window.loop(power, dif, powerup, level, world, window, barrier, p1, bricks, b1, background);
+			imgui_window.loop(power, dif, powerup, world, window, barrier, p1, bricks, b1, background);
 		}
 		if (sf::Keyboard::isKeyPressed(sf::Keyboard::F12))
 		{
 			settings = false;
 		}
-		b1.checkCollision(p1, false, false);
+		if (b1.checkCollision(p1, false, false)) {
+			ball.play_ball();
+		}
 		// fixes the bug of the ball endlessly bouncing wall to wall and now adds an elments of complexity
-		b1.checkCollision(barrier.barriers[1], true, false);
-		b1.checkCollision(barrier.barriers[3], true, true);
+		if (b1.checkCollision(barrier.barriers[1], true, false))
+		{
+			ball.play_ball();
+		}
+		if (b1.checkCollision(barrier.barriers[3], true, true))
+		{
+			ball.play_ball();
+		}
 		for (long unsigned int i = 0; i < bricks.size(); i++)
 		{
 			if (b1.checkCollision(bricks[i]))
@@ -91,10 +102,20 @@ int main()
 				powerup++;
 				if (powerup % 5 == 0)
 				{
+					target.reset(world, window);
+					power.words = "";
 					power.reset(world, window, dif, p1, b1);
-					power.select_powerup(world, dif, window.getSize().x / 30, b1, p1);
+					// power.select_powerup(world, dif, window.getSize().x / 30, b1, p1);
 				}
 			}
+		}
+		// Checks to see if the target is hit for powerups
+		if (b1.checkCollision(target))
+		{
+			ball.play_ball();
+			target.resetPosition(sf::Vector2f(-100, -100));
+			power.reset(world, window, dif, p1, b1);
+			power.select_powerup(world, dif, window.getSize().x / 30, b1, p1);
 		}
 		// Brick loop
 		window.clear();
@@ -106,12 +127,20 @@ int main()
 		{
 			bricks[0].refill_vector(world, window, dif, bricks);
 			level++; // Do someting with the level system
-			background.new_background();
+			if (level > 4)
+			{
+				level = 1;
+			}
+			background.new_background(level);
 		}
-		if (b1.deathCollision(world, window, barrier.barriers[0], powerup, b1, p1, bricks, dif))
+		if (!b1.death)
 		{
-			power.words = "";
-			power.reset(world, window, dif, p1, b1);
+			if (b1.deathCollision(world, window, barrier.barriers[0], powerup, b1, p1, bricks, dif))
+			{
+				power.words = "";
+				power.reset(world, window, dif, p1, b1);
+				target.resetPosition(sf::Vector2f(-100, -100));
+			}
 		}
 		p1.updatePosition(window);
 		b1.updatePosition(window);
@@ -119,9 +148,11 @@ int main()
 		{ // I like this way
 			i.updatePosition(window);
 		}
+		target.updatePosition(window);
 		ImGui::SFML::Render(window);
 		window.display();
 	}
+	ball.stop_main();
 	ImGui::SFML::Shutdown();
 	return 0;
 }

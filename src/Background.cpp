@@ -18,23 +18,25 @@ struct Background : public sf::Sprite
 	{
 		render.draw(*this);
 	}
-	void new_background()
+	void new_background(int level)
 	{
-		switch (rand() % 4)
+		// number dosen't need to be random, it just needs to cycle through
+		switch (level)
 		{
-			case 0:
+			case 1:
 				this->setTexture(back_txt);
 				break;
-			case 1:
+			case 2:
 				this->setTexture(back2_txt);
 				break;
-			case 2:
+			case 3:
 				this->setTexture(back3_txt);
 				break;
-			case 3:
+			case 4:
 				this->setTexture(back4_txt);
 				break;
 			default:
+				this->setTexture(back3_txt);
 				break;
 		}
 	}

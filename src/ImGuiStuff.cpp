@@ -13,16 +13,23 @@
 
 struct ImGuiStuff
 {
-	ImGuiStuff(sf::RenderWindow& window)
+	ImGuiStuff(sf::RenderWindow& window, int dif)
 	{
 		ImGui::SFML::Init(window);
+		selectedItem = dif;
 	}
-	void loop(Powerup& power, int dif, int& powerup, int& level, b2World& world, sf::RenderWindow& window, Barriers& barrier, Paddle& p1, std::vector<Brick>& bricks, Ball& b1, Background& background)
+	void loop(Powerup& power, int& dif, int& powerup, b2World& world, sf::RenderWindow& window, Barriers& barrier, Paddle& p1, std::vector<Brick>& bricks, Ball& b1, Background& background)
 	{
+		static const char* itemsen[] { "Easy", "Normal", "Hard" };
 		if (english)
 		{
+			std::cout << dif << std::endl;
 			ImGui::Begin("Settings");
-			ImGui::TextWrapped("HOW TO PLAY BRICK BREAKER. 1-> 'A' to move the paddle to the left. 2-> 'D' to move the paddle to the right. 3-> Aim for the bricks using the paddle. The right side of the paddle sends the ball to the right and vice versa for the left side.");
+			ImGui::TextWrapped("HOW TO PLAY BRICK BREAKER.\n1-> 'A' to move the paddle to the left.\n2-> 'D' to move the paddle to the right.\n3-> Aim for the bricks using the paddle. The right side of the paddle sends the ball to the right and vice versa for the left side.\n4. When the ball hits the walls it will bounce downwards at a 45 degree angle.\n5. Clear all the bricks for a suprise");
+			if (ImGui::ListBox("Difficulty", &selectedItem, itemsen, IM_ARRAYSIZE(itemsen)))
+			{
+				dif = selectedItem + 1;
+			}
 			if (ImGui::Button("Fullscreen - this will reset progress"))
 			{
 				window.close();
@@ -42,7 +49,7 @@ struct ImGuiStuff
 				bricks[0].refill_vector(world, window, dif, bricks);
 				// Reset counters
 				powerup = 0;
-				level = 1;
+				// level = 1;
 			}
 			if (ImGui::Button("Default - this will reset progress"))
 			{
@@ -63,7 +70,7 @@ struct ImGuiStuff
 				bricks[0].refill_vector(world, window, dif, bricks);
 				// Reset counters
 				powerup = 0;
-				level = 1;
+				// level = 1;
 			}
 			if (ImGui::Button("French"))
 			{
@@ -78,7 +85,7 @@ struct ImGuiStuff
 		else
 		{
 			ImGui::Begin("Paramètres");
-			ImGui::TextWrapped("COMMENT JOUER À BRICK BREAKER. 1-> 'A' Pour déplacer la raquette vers la gauche. 2-> 'D' Pour déplacer la raquette vers la droite. 3-> Vous visez les briques avec la balle lorsqu'elle rebondit sur la raquette. Lorsque la balle est sur la partie droite de la raquette, elle rebondit vers la droite et vice versa pour la partie gauche.");
+			ImGui::TextWrapped("COMMENT JOUER À BRICK BREAKER.\n1-> 'A' Pour bouger la raquette vers la gauche.\n2-> 'D' Pour bouger la raquette vers la droite.\n3-> Vous visez pour les briques avec la balle lorsqu'elle rebondit sur la raquette. Lorsque la balle est sur la partie droite de la raquette, elle rebondit vers la droite et même pour la partie gauche.\n4.Lorsque la balle frappe le mur, elle rebondit vers le bas à un angle de 45 degrés.\n5. Effacez toutes les briques pour une surprise.");
 			if (ImGui::Button("Plein écran - cette action va réinitialiser la progression"))
 			{
 				window.close();
@@ -98,7 +105,7 @@ struct ImGuiStuff
 				bricks[0].refill_vector(world, window, dif, bricks);
 				// Reset counters
 				powerup = 0;
-				level = 1;
+				// level = 1;
 			}
 			if (ImGui::Button("Défaut - cette action va réinitialiser la progression"))
 			{
@@ -119,7 +126,7 @@ struct ImGuiStuff
 				bricks[0].refill_vector(world, window, dif, bricks);
 				// Reset counters
 				powerup = 0;
-				level = 1;
+				// level = 1;
 			}
 			if (ImGui::Button("Anglais"))
 			{
@@ -132,6 +139,7 @@ struct ImGuiStuff
 			ImGui::End();
 		}
 	}
+	int selectedItem = 0;
 	bool english = true;
 };
 

@@ -1,5 +1,6 @@
 #ifndef MENU_H
 #define MENU_H
+#include "Sounds.cpp"
 #include <SFML/Graphics.hpp>
 #include <iostream>
 
@@ -16,7 +17,7 @@ public:
 	sf::CircleShape normal_mode;
 	sf::CircleShape hard_mode;
 	sf::Font arcade;
-	sf::Text easy_text, normal_text, hard_text, greeting;
+	sf::Text easy_text, normal_text, hard_text, greeting, info;
 };
 
 Menu::Menu(/* args */)
@@ -51,6 +52,10 @@ Menu::Menu(/* args */)
 	hard_mode.setFillColor(sf::Color::Red);
 	hard_mode.setPosition(button_placement_x * 3, button_placement_y);
 	hard_mode.setRadius(50);
+	info.setFont(arcade);
+	info.setCharacterSize(25);
+	info.setPosition(button_placement_x * 2 - 400, button_placement_y * 2 + 325);
+	info.setString("Press F11 to open the menu while in game\n and F12 to close the menu");
 }
 
 Menu::~Menu()
@@ -60,6 +65,8 @@ Menu::~Menu()
 
 int Menu::Run_Menu()
 {
+	Sounds music;
+	music.play_menu();
 	sf::Vector2i mousePosWindow;
 	sf::Vector2f mousePosView;
 	while (menu_window.isOpen() && !sf::Keyboard::isKeyPressed(sf::Keyboard::Escape))
@@ -94,6 +101,7 @@ int Menu::Run_Menu()
 			}
 		}
 		menu_window.clear();
+		menu_window.draw(info);
 		menu_window.draw(easy_text);
 		menu_window.draw(normal_text);
 		menu_window.draw(hard_text);
@@ -103,6 +111,7 @@ int Menu::Run_Menu()
 		menu_window.draw(hard_mode);
 		menu_window.display();
 	}
+	music.stop_menu();
 	return 0;
 }
 #endif

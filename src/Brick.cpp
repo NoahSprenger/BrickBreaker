@@ -26,6 +26,7 @@ struct Brick : public sf::RectangleShape
 		this->setOrigin(width / 2.0, height / 2.0);
 		this->setPosition(x, y);
 		this->setFillColor(sf::Color::White);
+		srand(time(NULL));
 	}
 	void updatePosition(sf::RenderWindow& render)
 	{
@@ -79,6 +80,37 @@ struct Brick : public sf::RectangleShape
 			world.DestroyBody(bricks[i].body);
 		}
 		bricks.clear();
+	}
+	void reset(b2World& world, sf::RenderWindow& window)
+	{
+		int width = this->getSize().x, height = this->getSize().y, holderx = window.getSize().x - window.getSize().x / 1.5, holdery = window.getSize().y - window.getSize().y / 1.5;
+		int y = rand() % holdery + window.getSize().y / 3;
+		int x = rand() % holderx + window.getSize().x / 3;
+		world.DestroyBody(body);
+		b2BodyDef bodyDef;
+		bodyDef.position.Set((x + width / 2.0) / pixels_per_meter, (y + height / 2.0) / pixels_per_meter);
+		bodyDef.type = b2_kinematicBody;
+		bodyDef.linearDamping = 0.05;
+		b2PolygonShape b2shape;
+		b2shape.SetAsBox(width / pixels_per_meter / 2.0, height / pixels_per_meter / 2.0);
+		b2FixtureDef fixtureDef;
+		fixtureDef.density = 1.0;
+		fixtureDef.friction = 0.0;
+		fixtureDef.restitution = 1.0;
+		fixtureDef.shape = &b2shape;
+
+		body = world.CreateBody(&bodyDef);
+		body->CreateFixture(&fixtureDef);
+
+		// sf::RectangleShape* shape = new sf::RectangleShape(sf::Vector2f(width, height));
+		this->setSize(sf::Vector2f(width, height));
+		this->setOrigin(width / 2.0, height / 2.0);
+		this->setPosition(x, y);
+		this->setFillColor(sf::Color::White);
+	}
+	void resetPosition(sf::Vector2f P)
+	{
+		body->SetTransform(b2Vec2(P.x / pixels_per_meter, P.y / pixels_per_meter), 0);
 	}
 	b2Body* body;
 };
