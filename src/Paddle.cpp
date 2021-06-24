@@ -1,6 +1,9 @@
 #ifndef PADDLE_H
 #define PADDLE_H
-#include "physics.h"
+#include "Constants.cpp"
+#include <SFML/Graphics.hpp>
+#include <box2d/box2d.h>
+#include <iostream>
 
 struct Paddle : public sf::RectangleShape
 {
@@ -28,6 +31,7 @@ struct Paddle : public sf::RectangleShape
 		left = -20;
 		right = 20;
 	}
+	// Update where the paddle is and draw it
 	void updatePosition(sf::RenderWindow& window)
 	{
 		//	Setting paddle velocity
@@ -44,6 +48,7 @@ struct Paddle : public sf::RectangleShape
 		this->setRotation(body->GetAngle() * deg_per_rad);
 		window.draw(*this);
 	}
+	// Update the size of the paddle6
 	void updateSize(b2World& world, float width)
 	{
 		float x, y, height;
@@ -66,20 +71,19 @@ struct Paddle : public sf::RectangleShape
 		body = world.CreateBody(&bodyDef);
 		body->CreateFixture(&fixtureDef);
 
-		// sf::RectangleShape* shape = new sf::RectangleShape(sf::Vector2f(width, height));
 		this->setSize(sf::Vector2f(width, height));
 		this->setOrigin(width / 2.0, height / 2.0);
 		this->setPosition(x, y);
 		this->setFillColor(sf::Color::White);
 	}
-	// For when window is resized
+	// Resize the paddle when the window is resized
 	void resize(b2World& world, sf::RenderWindow& window)
 	{
 		float x, y, height, width;
 		x = this->getPosition().x;
 		y = window.getSize().y * 0.9;
-		height = window.getSize().y / 67.5; // Allows for the paddle to stay proportinal
-		width = window.getSize().x / 12;	// Allows for the paddle to stay proportinal
+		height = window.getSize().y / 67.5; // Allows for the paddle to stay proportional
+		width = window.getSize().x / 12;	// Allows for the paddle to stay proportional
 		world.DestroyBody(this->body);
 		b2BodyDef bodyDef;
 		bodyDef.position.Set((x + width / 2.0) / pixels_per_meter, (y + height / 2.0) / pixels_per_meter);
@@ -101,12 +105,13 @@ struct Paddle : public sf::RectangleShape
 		this->setPosition(x, y);
 		this->setFillColor(sf::Color::White);
 	}
-	// Powerup for a faster paddle
+	// Power up for a faster paddle
 	void faster_paddle()
 	{
 		right = 30;
 		left = -30;
 	}
+	// Reset for the faster paddle power up
 	void regular_speed()
 	{
 		right = 20;

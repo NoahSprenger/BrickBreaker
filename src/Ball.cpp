@@ -1,8 +1,8 @@
 #ifndef BALL_H
 #define BALL_H
 #include "Brick.cpp"
+#include "Constants.cpp"
 #include "Paddle.cpp"
-// #include "physics.h"
 
 struct Ball : public sf::CircleShape
 {
@@ -28,12 +28,9 @@ struct Ball : public sf::CircleShape
 		body = world.CreateBody(&bodyDef);
 		body->CreateFixture(&fixtureDef);
 
-		// sf::CircleShape* shape1 = new sf::CircleShape(r);
-		// Read about the this operator
 		this->setRadius(r);
 		this->setOrigin(r, r);
 		this->setPosition(x, y);
-		// this->setFillColor(sf::Color::White);
 		if (texture)
 		{
 			ball_txt.loadFromFile("content/ball.png");
@@ -43,9 +40,9 @@ struct Ball : public sf::CircleShape
 		{
 			this->setFillColor(sf::Color::White);
 		}
-		// body->SetUserData(this);
 		body->SetLinearVelocity(b2Vec2(speed / pixels_per_meter * cos(angle / deg_per_rad), speed / pixels_per_meter * sin(angle / deg_per_rad)));
 	}
+	// Updates the position of the ball and draw it to the window
 	void updatePosition(sf::RenderWindow& render)
 	{
 		// Limit velocity
@@ -56,7 +53,7 @@ struct Ball : public sf::CircleShape
 		render.draw(*this);
 	}
 	// Collision with paddle and ball
-	bool checkCollision(const Paddle& p1, bool wall, bool left) // Calls the memory address instead of copying
+	bool checkCollision(const Paddle& p1, bool wall, bool left) // Calls the memory address of the paddle instead of copying
 	{
 		for (b2ContactEdge* edge = body->GetContactList(); edge; edge = edge->next)
 		{
@@ -88,11 +85,8 @@ struct Ball : public sf::CircleShape
 		}
 		return false;
 	}
-
-	// when the ball hits the side walls make the ball bounce a certain way kinda like the trump game
-
 	// Collision with ball and floor for death
-	bool deathCollision(b2World& world, sf::RenderWindow& window, const Paddle& barrier, int& powerup, Ball& b1, Paddle& p1, std::vector<Brick>& bricks, int dif) // Calls the memory address instead of copying
+	bool deathCollision(b2World& world, sf::RenderWindow& window, const Paddle& barrier, int& powerup, Ball& b1, Paddle& p1, std::vector<Brick>& bricks, int dif) // & calls the memory address instead of copying
 	{
 		for (b2ContactEdge* edge = body->GetContactList(); edge; edge = edge->next)
 		{
@@ -160,7 +154,6 @@ struct Ball : public sf::CircleShape
 	}
 	void resize(b2World& world, sf::RenderWindow& window, int dif, Paddle p1)
 	{
-		// angle = this->body->GetAngle(); // Results in a bug of the ball stuck bouncing from wall to wall
 		angle = 90;
 		// By allowing x to be the paddle position it resolves the bug of the ball being outside of the resized window after resizing
 		int x = p1.getPosition().x + p1.getSize().x / 2, y = window.getSize().y / 3, r = (window.getSize().x / 30) / 2;
@@ -172,7 +165,7 @@ struct Ball : public sf::CircleShape
 		bodyDef.linearDamping = 0.0;
 		b2CircleShape b2shape;
 
-		b2shape.m_radius = r / pixels_per_meter; // also need to fix the death collison to follow this standard of radius sizing
+		b2shape.m_radius = r / pixels_per_meter;
 
 		b2FixtureDef fixtureDef;
 		fixtureDef.density = 1.0;
@@ -183,16 +176,14 @@ struct Ball : public sf::CircleShape
 		body = world.CreateBody(&bodyDef);
 		body->CreateFixture(&fixtureDef);
 
-		// Read about the this operator
 		this->setRadius(r);
 		this->setOrigin(r, r);
 		this->setPosition(x, y);
-		// this->setFillColor(sf::Color::White);
 		body->SetLinearVelocity(b2Vec2(speed / pixels_per_meter * cos(angle / deg_per_rad), speed / pixels_per_meter * sin(angle / deg_per_rad)));
 	}
 	void resize_in_game(b2World& world, sf::RenderWindow& window, int dif)
 	{
-		angle = this->body->GetAngle(); // Results in a bug of the ball stuck bouncing from wall to wall
+		angle = this->body->GetAngle(); // Results in a bug of the ball stuck bouncing from wall to wall. Bug was solved by having the walls bounce the ball at a 45 degree angle.
 		// By allowing x to be the paddle position it resolves the bug of the ball being outside of the resized window after resizing
 		int x = this->getPosition().x, y = getPosition().y, r = (window.getSize().x / 30) / 2;
 		world.DestroyBody(this->body);
@@ -203,7 +194,7 @@ struct Ball : public sf::CircleShape
 		bodyDef.linearDamping = 0.0;
 		b2CircleShape b2shape;
 
-		b2shape.m_radius = r / pixels_per_meter; // also need to fix the death collison to follow this standard of radius sizing
+		b2shape.m_radius = r / pixels_per_meter;
 
 		b2FixtureDef fixtureDef;
 		fixtureDef.density = 1.0;
@@ -214,22 +205,19 @@ struct Ball : public sf::CircleShape
 		body = world.CreateBody(&bodyDef);
 		body->CreateFixture(&fixtureDef);
 
-		// Read about the this operator
 		this->setRadius(r);
 		this->setOrigin(r, r);
 		this->setPosition(x, y);
-		// this->setFillColor(sf::Color::White);
 		body->SetLinearVelocity(b2Vec2(speed / pixels_per_meter * cos(angle / deg_per_rad), speed / pixels_per_meter * sin(angle / deg_per_rad)));
 	}
-	// powerup that makes the balls linear velocity slower than usual
+	// Power up that makes the balls linear velocity slower than usual
 	void slow()
 	{
 		speed = 250;
 	}
-	// powerup that makes the ball big
+	// Power up that makes the ball big
 	void big_ball(b2World& world, int dif, int r, float angle)
 	{
-		// angle = this->body->GetAngle(); // Results in a bug of the ball stuck bouncing from wall to wall
 		int x = this->getPosition().x, y = this->getPosition().y;
 		world.DestroyBody(this->body);
 		speed = 250 * dif;
@@ -239,8 +227,7 @@ struct Ball : public sf::CircleShape
 		bodyDef.linearDamping = 0.0;
 		b2CircleShape b2shape;
 
-		b2shape.m_radius = r / pixels_per_meter; // also need to fix the death collison to follow this standard of radius sizing
-
+		b2shape.m_radius = r / pixels_per_meter;
 		b2FixtureDef fixtureDef;
 		fixtureDef.density = 1.0;
 		fixtureDef.friction = 0.0;
@@ -250,13 +237,12 @@ struct Ball : public sf::CircleShape
 		body = world.CreateBody(&bodyDef);
 		body->CreateFixture(&fixtureDef);
 
-		// Read about the this operator
 		this->setRadius(r);
 		this->setOrigin(r, r);
 		this->setPosition(x, y);
-		// this->setFillColor(sf::Color::White);
 		body->SetLinearVelocity(b2Vec2(speed / pixels_per_meter * cos(angle / deg_per_rad), speed / pixels_per_meter * sin(angle / deg_per_rad)));
 	}
+	// Power up that allows the ball to hit the floor and not result in a death
 	void no_death(bool dead)
 	{
 		death = dead;

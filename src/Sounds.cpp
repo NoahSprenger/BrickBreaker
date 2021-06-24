@@ -1,6 +1,5 @@
 #ifndef SOUNDS_H
 #define SOUNDS_H
-#include "physics.h"
 #include <SFML/Audio.hpp>
 
 struct Sounds
@@ -13,7 +12,9 @@ struct Sounds
 		main.openFromFile("content/main.ogg");
 		menu.setLoop(true);
 		main.setLoop(true);
+		main.setVolume(90); // Limit the music volume so the ball bounce can be heard
 	}
+	// Play and stop functions for the sound and music
 	void play_ball()
 	{
 		ball.play();

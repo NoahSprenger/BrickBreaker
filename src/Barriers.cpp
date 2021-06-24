@@ -1,7 +1,6 @@
 #ifndef Barriers_H
 #define Barriers_H
 #include "Paddle.cpp"
-#include "physics.h"
 
 struct Barriers
 {

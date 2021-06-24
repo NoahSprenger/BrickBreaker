@@ -9,8 +9,9 @@ struct Powerup
 {
 	Powerup()
 	{
-		srand(std::time(NULL));
+		srand(std::time(NULL)); // Randomize the seed
 	}
+	// Selects a random power up
 	void select_powerup(b2World& world, int dif, int r, Ball& ball, Paddle& p1)
 	{
 		switch (rand_power)
@@ -40,6 +41,7 @@ struct Powerup
 				break;
 		}
 	}
+	// Resets the power up
 	void reset(b2World& world, sf::RenderWindow& window, int dif, Paddle& p1, Ball& ball)
 	{
 		switch (rand_power)

@@ -14,13 +14,14 @@ struct Background : public sf::Sprite
 		x_scale = (float)window.getSize().x / 1920, y_scale = (float)window.getSize().y / 1080;
 		this->setScale(sf::Vector2f(x_scale, y_scale));
 	}
+	// Draws the background sprite to the window
 	void update(sf::RenderWindow& render)
 	{
 		render.draw(*this);
 	}
 	void new_background(int level)
 	{
-		// number dosen't need to be random, it just needs to cycle through
+		// number dose not need to be random, it just needs to cycle through
 		switch (level)
 		{
 			case 1:
