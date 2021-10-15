@@ -19,7 +19,7 @@ LINK_LIBRARIES := \
 	imsfml \
 	GL
 
-PRODUCTION_LINUX_ICON := sfml
+PRODUCTION_LINUX_ICON := logo
 
 PRODUCTION_LINUX_APP_NAME := Brick Breaker
 PRODUCTION_LINUX_APP_COMMENT := Brick Breaker game made for Gr12 Comp Sci class

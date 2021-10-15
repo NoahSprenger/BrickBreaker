@@ -6,12 +6,6 @@ VSCODE=$3
 OPTIONS=$4
 
 cwd=${PWD##*/}
-// SFML
-#include <SFML/Audio.hpp>
-#include <SFML/Graphics.hpp>
-#include <SFML/Network.hpp>
-#include <SFML/System.hpp>
-#include <SFML/Window.hpp>
 
 export GCC_COLORS="error=01;31:warning=01;33:note=01;36:locus=00;34"
 
@@ -19,64 +13,67 @@ export GCC_COLORS="error=01;31:warning=01;33:note=01;36:locus=00;34"
 # Function declarations
 
 display_styled_symbol() {
-	printf "\033[1;$1m$2  $3\033[0m\n"
+	tput setaf $1
+	tput bold
+	echo "$2  $3"
+	tput sgr0
 }
 
 build_success() {
-	printf '\n'
-	display_styled_symbol 32 "✔" "Succeeded!"
-	printf '\n'
+	echo
+	display_styled_symbol 2 "✔" "Succeeded!"
+	echo
 }
 
 launch() {
-	display_styled_symbol 32 " " "Launching bin/$BUILD/$NAME"
-	printf '\n'
+	display_styled_symbol 2 " " "Launching bin/$BUILD/$NAME"
+	echo
 }
 
 build_success_launch() {
-	printf '\n'
-	display_styled_symbol 32 "✔" "Succeeded!"
+	echo
+	display_styled_symbol 2 "✔" "Succeeded!"
 	launch
 }
 
 build_fail() {
-	printf '\n'
-	display_styled_symbol 31 "✘" "Failed!"
-	display_styled_symbol 31 " " "Review the compile errors above."
-	printf '\n'
-	printf '\033[0m'
+	echo
+	display_styled_symbol 1 "✘" "Failed!"
+	display_styled_symbol 1 " " "Review the compile errors above."
+	echo
+	tput sgr0
 	exit 1
 }
 
 build_prod_error() {
-	printf '\n'
-	display_styled_symbol 31 "⭙" "Error: buildprod must be run on Release build."
-	printf '\033[0m'
+	echo
+	display_styled_symbol 1 "⭙" "Error: buildprod must be run on Release build."
+	tput sgr0
 	exit 1
 }
 
 profiler_done() {
-	printf '\n'
-	display_styled_symbol 35 "⯌" "Profiler Completed: View $PROF_ANALYSIS_FILE for details"
-	printf '\n'
+	echo
+	display_styled_symbol 2 "⯌" "Profiler Completed: View $PROF_ANALYSIS_FILE for details"
+	echo
 }
 
 profiler_error() {
-	printf '\n'
-	display_styled_symbol 31 "⭙" "Error: Profiler must be run on Debug build."
-	printf '\033[0m'
+	echo
+	display_styled_symbol 1 "⭙" "Error: Profiler must be run on Debug build."
+	tput sgr0
 	exit 1
 }
 
 profiler_osx() {
-	display_styled_symbol 31 "⭙" "Error: Profiling (with gprof) is not supported on Mac OSX."
-	printf '\033[0m'
+	display_styled_symbol 1 "⭙" "Error: Profiling (with gprof) is not supported on Mac OSX."
+	tput sgr0
 	exit 1
 }
 
 cmd_buildrun() {
-	display_styled_symbol 33 "⬤" "Build & Run: $BUILD (target: $NAME)"
-	printf '\n'
+	display_styled_symbol 3 "⬤" "Build & Run: $BUILD (target: $NAME)"
+	echo
 	BLD=$BUILD
 	if [[ $BUILD == 'Tests' && $1 != 'main' ]]; then
 		BLD=Release
@@ -94,8 +91,8 @@ cmd_buildrun() {
 }
 
 cmd_build() {
-	display_styled_symbol 33 "⬤" "Build: $BUILD (target: $NAME)"
-	printf '\n'
+	display_styled_symbol 3 "⬤" "Build: $BUILD (target: $NAME)"
+	echo
 	BLD=$BUILD
 	if [[ $BUILD == 'Tests' && $1 != 'main' ]]; then
 		BLD=Release
@@ -108,8 +105,8 @@ cmd_build() {
 }
 
 cmd_rebuild() {
-	display_styled_symbol 33 "⬤" "Rebuild: $BUILD (target: $NAME)"
-	printf '\n'
+	display_styled_symbol 3 "⬤" "Rebuild: $BUILD (target: $NAME)"
+	echo
 	BLD=$BUILD
 	if [[ $BUILD == 'Tests' && $1 != 'main' ]]; then
 		BLD=Release
@@ -122,8 +119,8 @@ cmd_rebuild() {
 }
 
 cmd_run() {
-	display_styled_symbol 33 "⬤" "Run: $BUILD (target: $NAME)"
-	printf '\n'
+	display_styled_symbol 3 "⬤" "Run: $BUILD (target: $NAME)"
+	echo
 	launch
 	if [[ $BUILD == 'Tests' ]]; then
 		bin/Release/$NAME $OPTIONS
@@ -133,8 +130,8 @@ cmd_run() {
 }
 
 cmd_buildprod() {
-	display_styled_symbol 33 "⬤" "Production Build: $BUILD (target: $NAME)"
-	printf '\n'
+	display_styled_symbol 3 "⬤" "Production Build: $BUILD (target: $NAME)"
+	echo
 	if [[ $BUILD == 'Release' ]]; then
 		RECIPE=buildprod
 		if [[ $1 != 'main' ]]; then
@@ -151,16 +148,16 @@ cmd_buildprod() {
 }
 
 cmd_profile() {
-	display_styled_symbol 33 "⬤" "Profile: $BUILD (target: $NAME)"
-	printf '\n'
+	display_styled_symbol 3 "⬤" "Profile: $BUILD (target: $NAME)"
+	echo
 	if [[ $PLATFORM == 'osx' ]]; then
 		profiler_osx
 	elif [[ $BUILD == 'Debug' ]]; then
 		if $MAKE_EXEC BUILD=$BUILD; then
 			build_success_launch
-			printf '\033[0m'
+			tput sgr0
 			bin/$BUILD/$NAME
-			printf '\033[0;34m'
+			tput setaf 4
 			gprof bin/Debug/$NAME gmon.out > $PROF_ANALYSIS_FILE 2> /dev/null
 			profiler_done
 		else
@@ -203,7 +200,9 @@ if [[ $VSCODE != 'vscode' ]]; then
 			export PATH="/usr/local/gcc-8.1.0/bin:$PATH"
 		fi
 	fi
-	printf "\nbuild.sh PATH=$PATH\n"
+	echo
+	echo build.sh PATH=$PATH
+	echo
 fi
 
 export MAKE_EXEC=make
@@ -288,11 +287,14 @@ for target in $BUILD_TARGETS; do
 	fi
 
 
-	printf '\033[0;34m'
+	tput setaf 4
 	if $CHILD_CMD ; then
-		printf '\033[0m'
+		tput sgr0
 	else
-		printf "\033[1;31mError: Command \"$CHILD_CMD\" not recognized.\033[0m"
+		tput setaf 1
+		tput bold
+		echo $dec Error: Command \"$CHILD_CMD\" not recognized. $dec
+		tput sgr0
 		exit 1
 	fi
 
@@ -302,7 +304,5 @@ for target in $BUILD_TARGETS; do
 	fi
 
 done
-
-printf '\033[0m\n'
 
 exit 0
